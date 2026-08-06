@@ -1,0 +1,128 @@
+{
+  "activeIndex": 1,
+  "slides": [
+    {
+      "elements": [
+        {
+          "radiusTR": 0,
+          "width": 300,
+          "radiusBR": 0,
+          "height": 563,
+          "opacity": 1,
+          "name": "Shape",
+          "radiusBL": 0,
+          "id": "el-1785980981860",
+          "x": 270,
+          "type": "rect",
+          "y": 188,
+          "radiusTL": 0,
+          "fill": "#37ff00"
+        },
+        {
+          "fill": "#ff00a2",
+          "y": 191,
+          "radiusTL": 0,
+          "x": 761,
+          "type": "rect",
+          "radiusBL": 0,
+          "name": "Shape copy",
+          "id": "rect-1785980986210-0-582",
+          "radiusTR": 0,
+          "radiusBR": 0,
+          "height": 563,
+          "opacity": 1,
+          "width": 300
+        },
+        {
+          "radiusTR": 0,
+          "opacity": 1,
+          "height": 563,
+          "radiusBR": 0,
+          "width": 300,
+          "name": "Shape copy copy",
+          "radiusBL": 0,
+          "id": "rect-1785980993262-0-146",
+          "x": 1250,
+          "type": "rect",
+          "fill": "#ff2600",
+          "y": 196,
+          "radiusTL": 0
+        }
+      ],
+      "id": "slide-1785980975481",
+      "name": "NUMBER 1"
+    },
+    {
+      "elements": [
+        {
+          "fill": "#37ff00",
+          "radiusTL": 0,
+          "y": 182,
+          "x": 777,
+          "type": "rect",
+          "radiusBL": 0,
+          "name": "Shape",
+          "id": "el-1785980981860",
+          "radiusTR": 0,
+          "opacity": 1,
+          "height": 563,
+          "radiusBR": 0,
+          "width": 300
+        },
+        {
+          "type": "rect",
+          "x": -51,
+          "fill": "#ff00a2",
+          "y": -128,
+          "radiusTL": 0,
+          "opacity": 1,
+          "radiusBR": 0,
+          "height": 1345,
+          "width": 793,
+          "radiusTR": 0,
+          "id": "rect-1785980986210-0-582",
+          "name": "Shape copy",
+          "radiusBL": 0
+        },
+        {
+          "fill": "#ff2600",
+          "radiusTL": 0,
+          "y": -16,
+          "type": "rect",
+          "x": 1285,
+          "id": "rect-1785980993262-0-146",
+          "radiusBL": 0,
+          "name": "Shape copy copy",
+          "radiusBR": 0,
+          "height": 1139,
+          "opacity": 1,
+          "width": 635,
+          "radiusTR": 0
+        }
+      ],
+      "name": "NUMBER 2",
+      "id": "slide-1785981004614"
+    }
+  ],
+  "canvasSettings": {
+    "width": 1920,
+    "nav": {
+      "buttonBottomColor": "#094A68",
+      "buttonInactiveBottomColor": "#B8D4DF",
+      "buttonInactiveTextColor": "#073048",
+      "buttonFontSize": 14,
+      "buttonPaddingY": 8,
+      "navGap": 12,
+      "buttonInactiveColor": "#DCEBF2",
+      "buttonTextColor": "#ffffff",
+      "navPosition": "bottom",
+      "buttonPaddingX": 20,
+      "buttonRadius": 8,
+      "buttonColor": "#0C5E82"
+    },
+    "height": 1080,
+    "snapToGrid": false,
+    "backgroundColor": "#ffffff",
+    "gridSize": 20
+  }
+}
