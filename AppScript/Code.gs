@@ -93,8 +93,8 @@ function include(filename) {
  *   2. Set GITHUB_OWNER / GITHUB_REPO / GITHUB_BRANCH below.
  */
 
-const GITHUB_OWNER = 'your-org-or-username';
-const GITHUB_REPO = 'authoring-tools';
+const GITHUB_OWNER = 'jasonranieri';
+const GITHUB_REPO = 'interactive-tool-suite';
 const GITHUB_BRANCH = 'main';
 
 function apiSaveProject(tool, name, content) {

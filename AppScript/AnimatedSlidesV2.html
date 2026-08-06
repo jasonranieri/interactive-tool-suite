@@ -135,6 +135,7 @@
       <div class="top-bar-divider"></div>
       <button class="btn btn-secondary" onclick="newProject()">New</button>
       <button class="btn btn-secondary" onclick="Shell.openModal('open-modal'); refreshProjectList();">Open</button>
+      <button class="btn btn-secondary" onclick="openImportModal()">Load from code</button>
       <div class="top-bar-divider"></div>
       <button class="btn btn-secondary" onclick="openExportModal()">Export</button>
       <div class="top-bar-divider"></div>
@@ -255,6 +256,23 @@
       <button class="modal-close" onclick="Shell.closeModal('open-modal')">&times;</button>
     </div>
     <div class="modal-body"><div id="project-list-container"></div></div>
+  </div>
+</div>
+
+<!-- Import from code modal -->
+<div class="modal-overlay" id="import-modal">
+  <div class="modal-dialog wide">
+    <div class="modal-header">
+      <div><div class="title-block">Load from code</div><h2>Paste a previous export</h2></div>
+      <button class="modal-close" onclick="Shell.closeModal('import-modal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--ink-soft); margin-bottom: var(--space-4);">Paste the full HTML from a previous Export below. This rebuilds the project as an editable, unsaved copy — nothing is overwritten until you hit Save.</p>
+      <textarea id="import-textarea" class="code-view" placeholder="Paste exported HTML here..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="importFromCode()">Load</button>
+    </div>
   </div>
 </div>
 
@@ -580,6 +598,53 @@
     lastSavedStateJSON = JSON.stringify(slideManager.getState());
     refreshUI();
     Shell.toast('New project started', 'success');
+  }
+
+  /* ---- Import from a previous export ----
+     Exported HTML embeds the project's slides/canvasSettings verbatim as
+     `const slides = [...];` / `const canvasSettings = {...};` (see
+     openExportModal) — reading them back out is just a line-based parse
+     plus JSON.parse, no separate serialization format to maintain. */
+
+  function openImportModal() {
+    document.getElementById('import-textarea').value = '';
+    Shell.openModal('import-modal');
+  }
+
+  async function importFromCode() {
+    const pasted = document.getElementById('import-textarea').value;
+    const slidesMatch = pasted.match(/^const slides = (.+);$/m);
+    const canvasSettingsMatch = pasted.match(/^const canvasSettings = (.+);$/m);
+    if (!slidesMatch || !canvasSettingsMatch) {
+      Shell.toast("Couldn't find project data in that code — paste the full HTML from an Export.", 'danger');
+      return;
+    }
+
+    let slides, canvasSettings;
+    try {
+      slides = JSON.parse(slidesMatch[1]);
+      canvasSettings = JSON.parse(canvasSettingsMatch[1]);
+    } catch (error) {
+      Shell.toast(`Couldn't parse that code: ${error.message}`, 'danger');
+      return;
+    }
+
+    if (hasUnsavedChanges()) {
+      const proceed = await Shell.confirm('Loading from code will discard them.', { heading: 'Unsaved changes', okLabel: 'Discard and continue', danger: true });
+      if (!proceed) return;
+    }
+
+    Shell.closeModal('import-modal');
+    currentProjectName = "Untitled project";
+    document.getElementById('display-project-name').innerText = currentProjectName;
+    slideManager.setState({ activeIndex: 0, canvasSettings, slides });
+    history.undoStack = [];
+    history.redoStack = [];
+    history.onChange();
+    // Deliberately not synced to lastSavedStateJSON, unlike New/Open — an
+    // imported project is new, unsaved content until the author hits Save.
+    refreshUI();
+    Shell.toast('Project loaded from code — remember to Save it.', 'success');
   }
 
   /* ---- Canvas settings ---- */
