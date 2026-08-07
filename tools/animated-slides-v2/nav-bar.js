@@ -1,4 +1,3 @@
-<script>
 /* ==========================================================================
    Animated Slides v2 — Nav Bar
    The learner-facing navigation that lives INSIDE the exported bounding
@@ -219,4 +218,3 @@ function setupNavBar(container, navStyle, onNavigate) {
   return { refresh };
 }
 
-</script>

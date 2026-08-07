@@ -1,0 +1,18 @@
+Worked example of valid "Load from code" output — a 2-slide project.
+
+Notice the element with id "headline" appears on BOTH slides with different
+x/y/content. Because the id is reused, Animated Slides v2 treats it as the
+SAME element continuing across the slide change and animates it from its
+slide-1 position/state to its slide-2 position/state, instead of fading one
+out and a new one in. That's the "linking" mechanic — reuse an id on purpose
+whenever something should visibly move/morph between slides; give elements
+distinct ids whenever they should just fade out/in independently.
+
+This is exactly the two-line block the tool's "Load from code" parser looks
+for (see importFromCode() in index.html) — paste exactly this shape, nothing
+more is required around it.
+
+---
+
+const slides = [{"id":"slide-1","name":"Intro","elements":[{"id":"headline","type":"text","name":"Headline","x":260,"y":140,"width":1400,"height":160,"content":"Welcome to the module","fontSize":72,"fontWeight":"700","color":"#1f2937","align":"center","padding":10,"lineHeight":1.2,"opacity":1},{"id":"bg-card","type":"rect","name":"Card","x":210,"y":420,"width":1500,"height":500,"fill":"#e1f6db","radiusTL":24,"radiusTR":24,"radiusBR":24,"radiusBL":24,"opacity":1},{"id":"star-icon","type":"icon","name":"Star","x":900,"y":600,"width":120,"height":120,"iconName":"star","color":"#0C5E82","opacity":1},{"id":"pointer-arrow","type":"arrow","name":"Pointer","x":960,"y":560,"width":200,"height":200,"length":140,"angle":180,"strokeWidth":10,"color":"#0C5E82","opacity":1}]},{"id":"slide-2","name":"Key idea","elements":[{"id":"headline","type":"text","name":"Headline","x":140,"y":80,"width":900,"height":100,"content":"The key idea","fontSize":48,"fontWeight":"700","color":"#1f2937","align":"left","padding":10,"lineHeight":1.2,"opacity":1},{"id":"body-text","type":"text","name":"Body","x":140,"y":260,"width":1000,"height":300,"content":"Supporting detail goes here.\nA second line, explicitly broken.","fontSize":32,"fontWeight":"400","color":"#374151","align":"left","padding":10,"lineHeight":1.4,"opacity":1}]}];
+const canvasSettings = {"width":1920,"height":1080,"backgroundColor":"#ffffff","snapToGrid":false,"gridSize":20,"nav":{"navPosition":"bottom","navGap":12,"buttonColor":"#0C5E82","buttonTextColor":"#ffffff","buttonBottomColor":"#094A68","buttonInactiveColor":"#DCEBF2","buttonInactiveTextColor":"#073048","buttonInactiveBottomColor":"#B8D4DF","buttonFontSize":14,"buttonPaddingX":20,"buttonPaddingY":8,"buttonRadius":8}};

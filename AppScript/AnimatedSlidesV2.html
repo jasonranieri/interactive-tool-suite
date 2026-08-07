@@ -11,17 +11,28 @@
 <?!= include('AppShellCss'); ?>
 <style>
   #shell-main { min-height: 0; }
-  #left-rail { width: 200px; background: var(--surface); border-right: 1px solid var(--border); padding: var(--space-4); overflow-y: auto; flex-shrink: 0; }
-  #left-rail h2 { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft); margin: 0 0 var(--space-3); }
-  .add-element-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-bottom: var(--space-5); }
-  .add-element-btn {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: var(--space-3) var(--space-2); border: 1px solid var(--border); border-radius: var(--radius-sm);
-    background: var(--surface); cursor: pointer; font-family: var(--font-ui); font-size: 11px; color: var(--ink-soft);
-    transition: border-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
+  /* Left rail: a single vertical stack of icon-only buttons — the 4 "add
+     element" actions, then a divider, then the 3 drawer-openers (link,
+     layers, settings). Deliberately narrow (just wide enough for the
+     icon column) rather than the old 200px text-label rail, since there's
+     no label text left to make room for. */
+  #left-rail {
+    width: 64px; background: var(--surface); border-right: 1px solid var(--border);
+    padding: var(--space-4) var(--space-2); overflow-y: auto; flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
   }
-  .add-element-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
+  .add-element-grid { display: flex; flex-direction: column; gap: var(--space-2); }
+  .rail-divider { width: 28px; height: 1px; background: var(--border); margin: var(--space-1) 0; flex-shrink: 0; }
+  .add-element-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; flex-shrink: 0;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard);
+  }
+  .add-element-btn:hover { border-color: var(--accent); background: var(--accent-soft); }
   .add-element-btn i { font-size: 16px; color: var(--accent); }
+  .add-element-btn.btn-active { border-color: var(--accent); background: var(--accent-soft); }
   .layer-row { display: flex; align-items: center; gap: var(--space-2); padding: 7px 8px; border-radius: var(--radius-sm); cursor: pointer; font-size: var(--text-sm); border-top: 2px solid transparent; }
   .layer-row.dragging { opacity: 0.4; }
   .layer-row.drag-over { border-top-color: var(--accent); }
@@ -92,9 +103,32 @@
     border-radius: 4px; padding: 1px 5px; box-shadow: 0 1px 0 var(--border-strong);
   }
 
-  #settings-fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  /* Canvas settings: a non-blocking slide-out panel rather than the shared
+     centered/dimmed modal — you're tuning these values live against the
+     canvas (colors, artboard size), so covering the canvas while doing it
+     is exactly backwards. Docked to the right edge, no backdrop, canvas
+     stays fully visible and interactive while it's open. */
+  .side-panel {
+    position: fixed; top: 0; right: 0; bottom: 0; width: 360px; max-width: 90vw;
+    background: var(--surface); border-left: 1px solid var(--border); box-shadow: var(--shadow-lg);
+    display: flex; flex-direction: column; z-index: 90;
+    transform: translateX(100%); transition: transform var(--duration-base) var(--ease-standard);
+    pointer-events: none;
+  }
+  .side-panel.active { transform: translateX(0); pointer-events: auto; }
+  .side-panel-header { display: flex; align-items: flex-start; justify-content: space-between; padding: var(--space-5); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .side-panel-header h2 { margin: var(--space-1) 0 0; font-size: var(--text-lg); font-weight: 600; }
+  .side-panel-body { flex: 1; overflow-y: auto; padding: var(--space-5); }
+  #settings-fields { display: flex; flex-direction: column; gap: var(--space-5); }
   .top-bar-divider { width: 1px; height: 20px; background: var(--border); margin: 0 2px; }
-  .settings-section h3 { font-size: var(--text-sm); font-weight: 600; margin: 0 0 var(--space-3); color: var(--ink); }
+  .settings-section h3 { font-size: var(--text-sm); font-weight: 600; margin: 0 0 var(--space-4); color: var(--ink); }
+  /* Divider line between sections (not before the first one). */
+  .settings-section + .settings-section { border-top: 1px solid var(--border); padding-top: var(--space-5); }
+  /* Two equal-width columns; fields wrap into new rows automatically, and
+     a field left alone in a row (e.g. Background under Width/Height)
+     just sits in the first column, matching the reference layout. */
+  .settings-section .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+  .settings-section .field-grid .popup-field { margin-bottom: 0; }
 
   .cross-slide-group { margin-bottom: var(--space-4); }
   .cross-slide-group h4 { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft); margin: 0 0 var(--space-2); }
@@ -108,12 +142,38 @@
   .popup-name { display: block; width: 100%; font-family: var(--font-ui); font-size: var(--text-sm); font-weight: 700; color: var(--ink); border: none; border-bottom: 1px solid var(--border); border-radius: 0; padding: 0 0 var(--space-2); margin-bottom: var(--space-3); outline: none; background: transparent; }
   .popup-name:focus { border-bottom-color: var(--accent); }
   .popup-fields .popup-field { margin-bottom: var(--space-3); }
+  .settings-section .popup-field { margin-bottom: var(--space-5); }
   .popup-field:last-child { margin-bottom: 0; }
   .popup-field label { display: block; font-size: 10px; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 4px; }
   .popup-field input, .popup-field select, .popup-field textarea { width: 100%; font-family: var(--font-ui); font-size: var(--text-sm); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 5px 7px; box-sizing: border-box; }
   .popup-field textarea { resize: vertical; max-width: 100%; }
-  .popup-field input[type=color] { height: 28px; padding: 2px; }
+  /* Rounded-corner square swatch instead of the browser's default
+     full-width color bar — shared by every color input, including the
+     Colours table's swatches, which aren't wrapped in a .popup-field. */
+  .popup-field input[type=color], .colour-table input[type=color] { width: 40px; height: 40px; padding: 0; border-radius: var(--radius-sm); cursor: pointer; overflow: hidden; }
+  .popup-field input[type=color]::-webkit-color-swatch-wrapper, .colour-table input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+  .popup-field input[type=color]::-webkit-color-swatch, .colour-table input[type=color]::-webkit-color-swatch { border: none; border-radius: calc(var(--radius-sm) - 1px); }
+  .popup-field input[type=color]::-moz-color-swatch, .colour-table input[type=color]::-moz-color-swatch { border: none; border-radius: calc(var(--radius-sm) - 1px); }
   .popup-more-toggle { width: 100%; margin-top: 4px; padding: 6px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.03em; background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; color: var(--ink-soft); }
+  /* Slide switch, used wherever a plain on/off setting is needed instead
+     of a native checkbox (see CLAUDE.md's "no native dialogs" convention —
+     same reasoning: a styled control that actually looks like the rest of
+     the UI, rather than raw browser chrome). */
+  .popup-field.toggle-field { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .popup-field.toggle-field label { margin-bottom: 0; }
+  .switch { position: relative; display: inline-block; width: 38px; height: 22px; flex-shrink: 0; }
+  .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .switch-slider { position: absolute; inset: 0; background: var(--border-strong); border-radius: 999px; cursor: pointer; transition: background var(--duration-fast) var(--ease-standard); }
+  .switch-slider::before { content: ""; position: absolute; height: 16px; width: 16px; left: 3px; top: 3px; background: #fff; border-radius: 50%; box-shadow: var(--shadow-sm); transition: transform var(--duration-fast) var(--ease-standard); }
+  .switch input:checked + .switch-slider { background: var(--accent); }
+  .switch input:checked + .switch-slider::before { transform: translateX(16px); }
+  .switch input:focus-visible + .switch-slider { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* Colours: a table — rows are Background/Text/Border, columns are
+     Active/Inactive, each cell just a swatch. Blank corner cell above the
+     row labels, column headers above the swatches. */
+  .colour-table { display: grid; grid-template-columns: auto 1fr 1fr; column-gap: var(--space-4); row-gap: var(--space-3); align-items: center; }
+  .colour-table-head { font-size: 10px; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.03em; text-align: left; }
+  .colour-table-row-label { font-size: var(--text-sm); color: var(--ink); margin: 0; white-space: nowrap; }
   .popup-fields + .popup-more-toggle { margin-top: var(--space-3); }
   .popup-more-toggle + .popup-fields { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border); }
 </style>
@@ -143,7 +203,6 @@
       <button class="btn btn-secondary" id="redo-btn" onclick="history.redo()">Redo</button>
       <div class="top-bar-divider"></div>
       <button class="btn btn-secondary" onclick="Shell.openModal('shortcuts-modal')" title="Keyboard shortcuts"><i class="fa-regular fa-circle-question"></i></button>
-      <button class="btn btn-secondary" onclick="openSettingsModal()"><i class="fa-solid fa-gear"></i> Settings</button>
       <div class="top-bar-divider"></div>
       <button class="btn btn-primary" onclick="saveProject()"><i class="fa-solid fa-cloud-arrow-up"></i> Save</button>
     </div>
@@ -151,11 +210,11 @@
 
   <div id="shell-main" style="display:flex;">
     <div id="left-rail">
-      <h2>Add element</h2>
       <div class="add-element-grid" id="add-element-grid"></div>
-      <button class="btn btn-secondary" style="width:100%; margin-bottom: var(--space-5);" onclick="openCrossSlideModal()"><i class="fa-solid fa-link"></i> From another slide</button>
-      <h2>Layers</h2>
-      <div id="layer-list"></div>
+      <div class="rail-divider"></div>
+      <button class="add-element-btn" onclick="openCrossSlideModal()" title="Add linked element" aria-label="Add linked element"><i class="fa-solid fa-link"></i></button>
+      <button class="add-element-btn" id="layers-toggle-btn" onclick="toggleLayersPanel()" title="Layers" aria-label="Toggle layers panel"><i class="fa-solid fa-layer-group"></i></button>
+      <button class="add-element-btn" id="settings-toggle-btn" onclick="toggleSettingsPanel()" title="Settings" aria-label="Toggle canvas settings"><i class="fa-solid fa-gear"></i></button>
     </div>
     <div id="canvas-col">
       <div id="stage">
@@ -232,19 +291,27 @@
   </div>
 </div>
 
-<!-- Settings modal -->
-<div class="modal-overlay" id="settings-modal">
-  <div class="modal-dialog wide">
-    <div class="modal-header">
-      <div><div class="title-block">Settings</div><h2>Canvas settings</h2></div>
-      <button class="modal-close" onclick="Shell.closeModal('settings-modal')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div id="settings-fields"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="Shell.closeModal('settings-modal')">Close</button>
-    </div>
+<!-- Layers panel: slide-out, non-blocking — see .side-panel comment above.
+     Its own dedicated drawer (not folded into Settings) since layers are a
+     distinct, frequently-toggled concern from project-wide canvas settings. -->
+<div class="side-panel" id="layers-panel">
+  <div class="side-panel-header">
+    <div><div class="title-block">Layers</div><h2>This slide's layers</h2></div>
+    <button class="modal-close" onclick="closeLayersPanel()">&times;</button>
+  </div>
+  <div class="side-panel-body">
+    <div id="layer-list"></div>
+  </div>
+</div>
+
+<!-- Canvas settings panel: slide-out, non-blocking — see .side-panel comment above -->
+<div class="side-panel" id="settings-panel">
+  <div class="side-panel-header">
+    <div><div class="title-block">Settings</div><h2>Canvas settings</h2></div>
+    <button class="modal-close" onclick="closeSettingsPanel()">&times;</button>
+  </div>
+  <div class="side-panel-body">
+    <div id="settings-fields"></div>
   </div>
 </div>
 
@@ -559,7 +626,9 @@
     Object.entries(ELEMENT_TYPES).forEach(([type, schema]) => {
       const btn = document.createElement('button');
       btn.className = 'add-element-btn';
-      btn.innerHTML = `<i class="fa-solid ${schema.icon}"></i><span>${schema.label}</span>`;
+      btn.title = schema.label;
+      btn.setAttribute('aria-label', 'Add ' + schema.label);
+      btn.innerHTML = `<i class="fa-solid ${schema.icon}"></i>`;
       btn.addEventListener('click', () => addElement(type));
       container.appendChild(btn);
     });
@@ -653,20 +722,23 @@
     { group: 'Artboard', key: 'width', label: 'Width', type: 'number', root: true },
     { group: 'Artboard', key: 'height', label: 'Height', type: 'number', root: true },
     { group: 'Artboard', key: 'backgroundColor', label: 'Background', type: 'color', root: true },
-    { group: 'Artboard', key: 'snapToGrid', label: 'Snap to grid', type: 'checkbox', root: true },
-    { group: 'Artboard', key: 'gridSize', label: 'Grid size', type: 'number', root: true },
+    { group: 'Grid', key: 'gridSize', label: 'Size', type: 'number', root: true },
+    { group: 'Grid', key: 'snapToGrid', label: 'Snap to Grid', type: 'boolean-select', root: true },
     { group: 'Navigation', key: 'navPosition', label: 'Position', type: 'select', options: [['bottom', 'Bottom'], ['top', 'Top']] },
-    { group: 'Navigation', key: 'navGap', label: 'Gap', type: 'number' },
-    { group: 'Navigation', key: 'buttonFontSize', label: 'Font size', type: 'number' },
+    { group: 'Navigation', key: 'buttonRadius', label: 'Corner Radius', type: 'number' },
+    { group: 'Navigation', key: 'buttonFontSize', label: 'Size', type: 'number' },
+    { group: 'Navigation', key: 'buttonFontWeight', label: 'Weight', type: 'select',
+      options: [['400', 'Regular'], ['500', 'Medium'], ['600', 'Semibold'], ['700', 'Bold'], ['800', 'Extra bold']] },
     { group: 'Navigation', key: 'buttonPaddingX', label: 'Padding X', type: 'number' },
     { group: 'Navigation', key: 'buttonPaddingY', label: 'Padding Y', type: 'number' },
-    { group: 'Navigation', key: 'buttonRadius', label: 'Corner radius', type: 'number' },
-    { group: 'Button colors', key: 'buttonColor', label: 'Active background', type: 'color' },
-    { group: 'Button colors', key: 'buttonTextColor', label: 'Active text', type: 'color' },
-    { group: 'Button colors', key: 'buttonBottomColor', label: 'Active border', type: 'color' },
-    { group: 'Button colors', key: 'buttonInactiveColor', label: 'Inactive background', type: 'color' },
-    { group: 'Button colors', key: 'buttonInactiveTextColor', label: 'Inactive text', type: 'color' },
-    { group: 'Button colors', key: 'buttonInactiveBottomColor', label: 'Inactive border', type: 'color' },
+  ];
+
+  // Colours: rows are the 3 style properties, columns are Active/Inactive —
+  // a table, not the generic one-field-per-row loop below.
+  const NAV_COLOUR_ROWS = [
+    { label: 'Background', activeKey: 'buttonColor', inactiveKey: 'buttonInactiveColor' },
+    { label: 'Text', activeKey: 'buttonTextColor', inactiveKey: 'buttonInactiveTextColor' },
+    { label: 'Border', activeKey: 'buttonBottomColor', inactiveKey: 'buttonInactiveBottomColor' },
   ];
 
   function getSettingValue(field) {
@@ -676,8 +748,67 @@
     if (field.root) slideManager.canvasSettings[field.key] = value;
     else slideManager.canvasSettings.nav[field.key] = value;
   }
+  function bindSettingInput(input, field, type) {
+    input.addEventListener('focus', () => { if (history) history.beginAction(); });
+    input.addEventListener('input', () => {
+      let val = type === 'toggle' ? input.checked : input.value;
+      if (type === 'boolean-select') val = val === 'true';
+      else if (type === 'number') val = parseFloat(val) || 0;
+      setSettingValue(field, val);
+      refreshUI();
+    });
+    input.addEventListener('change', () => { if (history) history.commitAction(); });
+  }
+
+  function renderColoursSection() {
+    const section = document.createElement('div');
+    section.className = 'settings-section';
+    const h3 = document.createElement('h3');
+    h3.textContent = 'Colours';
+    section.appendChild(h3);
+
+    const table = document.createElement('div');
+    table.className = 'colour-table';
+
+    table.appendChild(document.createElement('span')); // blank corner cell
+    ['Active', 'Inactive'].forEach((text) => {
+      const head = document.createElement('span');
+      head.className = 'colour-table-head';
+      head.textContent = text;
+      table.appendChild(head);
+    });
+
+    NAV_COLOUR_ROWS.forEach((row) => {
+      const rowLabel = document.createElement('label');
+      rowLabel.className = 'colour-table-row-label';
+      rowLabel.textContent = row.label;
+      table.appendChild(rowLabel);
+
+      [row.activeKey, row.inactiveKey].forEach((key) => {
+        const colorInput = document.createElement('input');
+        colorInput.type = 'color';
+        colorInput.value = slideManager.canvasSettings.nav[key];
+        bindSettingInput(colorInput, { key }, 'color');
+        table.appendChild(colorInput);
+      });
+    });
+
+    section.appendChild(table);
+    return section;
+  }
 
   function renderSettingsModal() {
+    // Backfill any nav keys missing from an older saved project (e.g. a
+    // field added after that project was last saved) with their
+    // defaults, so it reflects its actual effective value instead of
+    // reading as unset — nav-bar.js's own fallbacks already default
+    // these safely at render time, this just keeps the settings UI in
+    // sync with that.
+    const navDefaults = defaultNavStyle();
+    Object.keys(navDefaults).forEach((k) => {
+      if (slideManager.canvasSettings.nav[k] === undefined) slideManager.canvasSettings.nav[k] = navDefaults[k];
+    });
+
     const container = document.getElementById('settings-fields');
     container.innerHTML = '';
     const groups = {};
@@ -690,6 +821,9 @@
       h3.textContent = groupName;
       section.appendChild(h3);
 
+      const grid = document.createElement('div');
+      grid.className = 'field-grid';
+
       fields.forEach((field) => {
         const wrap = document.createElement('div');
         wrap.className = 'popup-field';
@@ -697,7 +831,7 @@
         label.textContent = field.label;
         wrap.appendChild(label);
 
-        let input;
+        let input, appendEl;
         if (field.type === 'select') {
           input = document.createElement('select');
           field.options.forEach(([val, text]) => {
@@ -706,37 +840,81 @@
             if (val === getSettingValue(field)) opt.selected = true;
             input.appendChild(opt);
           });
-        } else if (field.type === 'checkbox') {
+          appendEl = input;
+        } else if (field.type === 'boolean-select') {
+          input = document.createElement('select');
+          [[true, 'On'], [false, 'Off']].forEach(([val, text]) => {
+            const opt = document.createElement('option');
+            opt.value = String(val); opt.textContent = text;
+            if (val === !!getSettingValue(field)) opt.selected = true;
+            input.appendChild(opt);
+          });
+          appendEl = input;
+        } else if (field.type === 'toggle') {
+          // Styled slide switch instead of a native checkbox — same
+          // "no raw browser chrome" reasoning as Shell.confirm/prompt.
+          // (Not currently used by any field, kept for future settings
+          // that genuinely are a plain on/off rather than a labeled choice.)
+          wrap.classList.add('toggle-field');
           input = document.createElement('input');
           input.type = 'checkbox';
-          input.style.width = 'auto';
           input.checked = !!getSettingValue(field);
+          const switchLabel = document.createElement('label');
+          switchLabel.className = 'switch';
+          const slider = document.createElement('span');
+          slider.className = 'switch-slider';
+          switchLabel.appendChild(input);
+          switchLabel.appendChild(slider);
+          appendEl = switchLabel;
         } else {
           input = document.createElement('input');
           input.type = field.type;
           input.value = getSettingValue(field);
+          appendEl = input;
         }
 
-        input.addEventListener('focus', () => { if (history) history.beginAction(); });
-        input.addEventListener('input', () => {
-          let val = field.type === 'checkbox' ? input.checked : input.value;
-          if (field.type === 'number') val = parseFloat(val) || 0;
-          setSettingValue(field, val);
-          refreshUI();
-        });
-        input.addEventListener('change', () => { if (history) history.commitAction(); });
+        bindSettingInput(input, field, field.type);
 
-        wrap.appendChild(input);
-        section.appendChild(wrap);
+        wrap.appendChild(appendEl);
+        grid.appendChild(wrap);
       });
 
+      section.appendChild(grid);
       container.appendChild(section);
     });
+
+    container.appendChild(renderColoursSection());
   }
 
-  function openSettingsModal() {
+  // Both drawers dock to the same right edge, so only one makes sense open
+  // at a time — opening either one closes the other first.
+  function openSettingsPanel() {
+    closeLayersPanel();
     renderSettingsModal();
-    Shell.openModal('settings-modal');
+    document.getElementById('settings-panel').classList.add('active');
+    document.getElementById('settings-toggle-btn').classList.add('btn-active');
+  }
+  function closeSettingsPanel() {
+    document.getElementById('settings-panel').classList.remove('active');
+    document.getElementById('settings-toggle-btn').classList.remove('btn-active');
+  }
+  function toggleSettingsPanel() {
+    const isOpen = document.getElementById('settings-panel').classList.contains('active');
+    if (isOpen) closeSettingsPanel(); else openSettingsPanel();
+  }
+
+  function openLayersPanel() {
+    closeSettingsPanel();
+    document.getElementById('layers-panel').classList.add('active');
+    document.getElementById('layers-toggle-btn').classList.add('btn-active');
+  }
+  function closeLayersPanel() {
+    document.getElementById('layers-panel').classList.remove('active');
+    document.getElementById('layers-toggle-btn').classList.remove('btn-active');
+  }
+  function toggleLayersPanel() {
+    const isOpen = document.getElementById('layers-panel').classList.contains('active');
+    if (isOpen) closeLayersPanel(); else openLayersPanel();
   }
 
   /* ---- Add from another slide (copy or link) ---- */

@@ -1,4 +1,3 @@
-<script>
 /* ==========================================================================
    Animated Slides v2 — Canvas Editor
    Selection (including multi-select), drag-to-move, resize handles, and
@@ -828,4 +827,3 @@ class CanvasEditor {
   }
 }
 
-</script>

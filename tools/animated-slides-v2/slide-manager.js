@@ -1,4 +1,3 @@
-<script>
 /* ==========================================================================
    Animated Slides v2 — Slide Manager
    Owns the multi-slide project state and the actual "animated slides"
@@ -331,4 +330,3 @@ class SlideManager {
   }
 }
 
-</script>

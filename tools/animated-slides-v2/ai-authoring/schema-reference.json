@@ -1,0 +1,96 @@
+{
+  "_comment": "Machine-readable mirror of ELEMENT_TYPES (ElementTypesJs.html), defaultCanvasSettings/defaultNavStyle (SlideManagerJs.html / NavBarJs.html). If those source files change, update this file to match — prompt.md's data model section is written to stay consistent with this.",
+
+  "commonElementFields": {
+    "id": { "type": "string", "required": true, "notes": "Unique per element. Reusing the SAME id for an element on a different slide is how cross-slide 'linking' (animated continuity) works — it is not an error, it's the core mechanic of this tool." },
+    "type": { "type": "string", "required": true, "oneOf": ["text", "rect", "arrow", "icon"] },
+    "name": { "type": "string", "required": false, "notes": "Layer-panel display label only. Purely cosmetic, doesn't affect rendering." },
+    "x": { "type": "number", "required": true, "notes": "Meaning depends on type — see per-type notes. For text/rect/icon this is the left edge of the bounding box. For arrow this is the TAIL (start point), not a bounding-box corner." },
+    "y": { "type": "number", "required": true, "notes": "Same caveat as x — top edge for text/rect/icon, tail point for arrow." },
+    "width": { "type": "number", "required": true, "notes": "For text and arrow this is recomputed by the app on load/edit (text: from wrapping; arrow: from length+angle) — set a reasonable value but don't rely on it being authoritative for those two types." },
+    "height": { "type": "number", "required": true, "notes": "Same recomputation caveat as width." }
+  },
+
+  "elementTypes": {
+    "text": {
+      "defaultSize": { "width": 400, "height": 120 },
+      "fields": {
+        "content": { "type": "string", "default": "New text", "notes": "Plain text only — no inline bold/italic/links. Use literal \\n for explicit line breaks; long lines auto word-wrap to width. A single word longer than the box overflows rather than breaking mid-word." },
+        "fontSize": { "type": "number", "default": 52, "min": 8, "max": 200 },
+        "fontWeight": { "type": "string", "default": "700", "oneOf": ["400", "500", "600", "700", "800"], "notes": "String, not number, even though it looks numeric." },
+        "color": { "type": "string(hex)", "default": "#1f2937" },
+        "align": { "type": "string", "default": "center", "oneOf": ["left", "center", "right", "justify"] },
+        "padding": { "type": "number", "default": 10, "min": 0, "max": 100 },
+        "lineHeight": { "type": "number", "default": 1.3, "min": 0.8, "max": 3, "notes": "Multiplier of fontSize, not a pixel value." },
+        "opacity": { "type": "number", "default": 1, "min": 0, "max": 1 }
+      },
+      "notes": "height is auto-recalculated from wrapped line count on load — don't worry about getting it exactly right."
+    },
+    "rect": {
+      "defaultSize": { "width": 300, "height": 200 },
+      "fields": {
+        "fill": { "type": "string(hex)", "default": "#e1f6db" },
+        "radiusTL": { "type": "number", "default": 0, "min": 0, "max": 300 },
+        "radiusTR": { "type": "number", "default": 0, "min": 0, "max": 300 },
+        "radiusBR": { "type": "number", "default": 0, "min": 0, "max": 300 },
+        "radiusBL": { "type": "number", "default": 0, "min": 0, "max": 300 },
+        "opacity": { "type": "number", "default": 1, "min": 0, "max": 1 }
+      },
+      "notes": "Each corner radius is clamped at render time to min(width,height)/2, so opposite corners never overlap. No stroke/border field exists — fill only."
+    },
+    "arrow": {
+      "defaultSize": { "width": 200, "height": 200 },
+      "fields": {
+        "length": { "type": "number", "default": 200, "min": 10, "max": 1800 },
+        "angle": { "type": "number", "default": 180, "min": 0, "max": 360, "notes": "Compass-style: 0=up, 90=right, 180=down, 270=left. NOT standard math angle." },
+        "strokeWidth": { "type": "number", "default": 8, "min": 1, "max": 60 },
+        "color": { "type": "string(hex)", "default": "#1f2937" },
+        "opacity": { "type": "number", "default": 1, "min": 0, "max": 1 }
+      },
+      "notes": "x,y is the arrow's TAIL point, not a bounding-box corner — the arrowhead lands at (x + length*sin(angle), y - length*cos(angle)). width/height are derived, ignore them when placing an arrow."
+    },
+    "icon": {
+      "defaultSize": { "width": 80, "height": 80 },
+      "fields": {
+        "iconName": { "type": "string", "default": "star", "oneOf": ["star", "heart", "check-circle", "info", "warning", "flag", "bookmark"], "notes": "CLOSED SET. Any other value silently falls back to 'star' — do not invent icon names." },
+        "color": { "type": "string(hex)", "default": "#1f2937" },
+        "opacity": { "type": "number", "default": 1, "min": 0, "max": 1 }
+      },
+      "notes": "width/height set the icon's square render size directly (unlike text/arrow, these ARE authoritative here)."
+    }
+  },
+
+  "canvasSettings": {
+    "width": { "type": "number", "default": 1920, "notes": "Artboard pixel width. All element x/y/width/height are in this same coordinate space, origin top-left, y increases downward." },
+    "height": { "type": "number", "default": 1080 },
+    "backgroundColor": { "type": "string(hex)", "default": "#ffffff" },
+    "snapToGrid": { "type": "boolean", "default": false, "notes": "Authoring-only convenience, has no effect on rendering/export — safe to leave false." },
+    "gridSize": { "type": "number", "default": 20 },
+    "nav": {
+      "navPosition": { "type": "string", "default": "bottom", "oneOf": ["top", "bottom"] },
+      "navGap": { "type": "number", "default": 12 },
+      "buttonColor": { "type": "string(hex)", "default": "#0C5E82" },
+      "buttonTextColor": { "type": "string(hex)", "default": "#ffffff" },
+      "buttonBottomColor": { "type": "string(hex)", "default": "#094A68", "notes": "The active button's 3D-style bottom border color." },
+      "buttonInactiveColor": { "type": "string(hex)", "default": "#DCEBF2" },
+      "buttonInactiveTextColor": { "type": "string(hex)", "default": "#073048" },
+      "buttonInactiveBottomColor": { "type": "string(hex)", "default": "#B8D4DF" },
+      "buttonFontSize": { "type": "number", "default": 14 },
+      "buttonPaddingX": { "type": "number", "default": 20 },
+      "buttonPaddingY": { "type": "number", "default": 8 },
+      "buttonRadius": { "type": "number", "default": 8 }
+    },
+    "notes": "If `nav` is omitted entirely, defaults are used automatically. If canvasSettings itself is provided but missing individual keys (other than nav), those keys end up undefined rather than defaulted — always emit the full object."
+  },
+
+  "slide": {
+    "id": { "type": "string", "required": true, "notes": "Any unique string, e.g. 'slide-1'. Must be unique across the whole project's slides." },
+    "name": { "type": "string", "required": true, "notes": "Shown as the nav bar button label learners click — keep it short, it doesn't wrap." },
+    "elements": { "type": "array", "items": "element object (see elementTypes)", "notes": "Array order = visual stacking order, first = bottom of stack." }
+  },
+
+  "topLevelState": {
+    "slides": "array of slide objects, in playback order",
+    "canvasSettings": "canvasSettings object (see above)"
+  }
+}
