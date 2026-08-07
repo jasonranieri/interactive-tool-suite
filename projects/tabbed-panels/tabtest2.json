@@ -1,22 +1,28 @@
 {
   "styles": {
-    "h4": {
+    "h3": {
       "color": "#111827",
-      "size": 18
+      "size": 22
     },
     "h2": {
-      "size": 28,
-      "color": "#111827"
+      "color": "#111827",
+      "size": 28
     },
     "subtitle": {
       "color": "#6b7280",
       "size": 16
     },
+    "tabLabel": {
+      "paddingX": 24,
+      "fontSize": 15,
+      "paddingY": 16
+    },
+    "blockSpacing": 26,
     "badge": {
       "primary": {
+        "border": "#2563eb",
         "text": "#ffffff",
-        "bg": "#2563eb",
-        "border": "#2563eb"
+        "bg": "#2563eb"
       },
       "secondary": {
         "text": "#374151",
@@ -24,61 +30,53 @@
         "bg": "#f3f4f6"
       }
     },
-    "h3": {
-      "size": 22,
-      "color": "#111827"
-    },
-    "blockSpacing": 26,
-    "tabLabel": {
-      "paddingX": 24,
-      "fontSize": 15,
-      "paddingY": 16
+    "h4": {
+      "color": "#111827",
+      "size": 18
     },
     "button": {
-      "primary": {
-        "text": "#ffffff",
-        "border": "#2563eb",
-        "bg": "#2563eb"
-      },
       "secondary": {
         "bg": "#ffffff",
         "border": "#d1d5db",
         "text": "#111827"
+      },
+      "primary": {
+        "bg": "#2563eb",
+        "text": "#ffffff",
+        "border": "#2563eb"
       }
     }
   },
-  "activeTabId": "tab-1786082341601-jsf6i",
   "tabs": [
     {
       "blocks": [],
-      "id": "tab-1786082341601-jsf6i",
-      "title": "Tab 1"
+      "title": "Tab 1",
+      "id": "tab-1786082341601-jsf6i"
     },
     {
-      "title": "Secondary Tab",
       "id": "tab-1786082350981-xgahs",
       "blocks": [
         {
-          "id": "block-1786082364634-tlmw4",
-          "text": "Heading",
-          "subtitle": "This is a subtitle",
           "type": "heading",
-          "level": "h2"
+          "subtitle": "This is a subtitle",
+          "id": "block-1786082364634-tlmw4",
+          "level": "h2",
+          "text": "Heading"
         },
         {
-          "style": "bullet",
-          "id": "block-1786082384223-zpefu",
           "items": [
             "This is the first item",
             "Second Item"
           ],
-          "type": "list"
+          "style": "bullet",
+          "type": "list",
+          "id": "block-1786082384223-zpefu"
         },
         {
+          "id": "block-1786082405487-spjuu",
           "label": "Warning",
-          "type": "badge",
           "style": "secondary",
-          "id": "block-1786082405487-spjuu"
+          "type": "badge"
         },
         {
           "id": "block-1786082428126-b4wh2",
@@ -86,11 +84,13 @@
         },
         {
           "align": "left",
-          "content": "Thi sis a paragraph o ftext&nbsp;",
           "type": "paragraph",
+          "content": "Thi sis a paragraph o ftext&nbsp;",
           "id": "block-1786082412821-hjx7d"
         }
-      ]
+      ],
+      "title": "Secondary Tab"
     }
-  ]
+  ],
+  "activeTabId": "tab-1786082341601-jsf6i"
 }
