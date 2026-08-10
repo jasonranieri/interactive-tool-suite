@@ -1,0 +1,70 @@
+{
+  "activeTabId": "tab-1786345042593-vrs04",
+  "tabs": [
+    {
+      "blocks": [],
+      "id": "tab-1786345042593-vrs04",
+      "title": "Tab 1"
+    }
+  ],
+  "styles": {
+    "tabLabel": {
+      "paddingY": 16,
+      "fontSize": 15,
+      "paddingX": 24
+    },
+    "h3": {
+      "size": 22,
+      "color": "#111827"
+    },
+    "button": {
+      "secondary": {
+        "text": "#111827",
+        "border": "#d1d5db",
+        "bg": "#ffffff"
+      },
+      "primary": {
+        "bg": "#2563eb",
+        "text": "#ffffff",
+        "border": "#2563eb"
+      }
+    },
+    "h4": {
+      "color": "#111827",
+      "size": 18
+    },
+    "subtitle": {
+      "color": "#6b7280",
+      "size": 16
+    },
+    "blockSpacing": 12,
+    "h2": {
+      "size": 28,
+      "color": "#111827"
+    },
+    "table": {
+      "plain": {
+        "bg": "#ffffff",
+        "text": "#111827",
+        "border": "#ffffff"
+      },
+      "bordered": {
+        "bg": "#fafaf8",
+        "text": "#111827",
+        "border": "#cbc8be"
+      }
+    },
+    "badge": {
+      "primary": {
+        "border": "#2563eb",
+        "text": "#ffffff",
+        "bg": "#2563eb"
+      },
+      "secondary": {
+        "bg": "#f3f4f6",
+        "text": "#374151",
+        "border": "#d1d5db"
+      }
+    }
+  }
+}
