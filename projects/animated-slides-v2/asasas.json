@@ -1,48 +1,48 @@
 {
-  "activeIndex": 0,
   "slides": [
     {
+      "name": "Slide 1",
+      "id": "slide-1786323318739",
       "elements": [
         {
+          "radiusBL": 0,
           "name": "Shape",
-          "width": 300,
-          "radiusTR": 0,
-          "radiusTL": 0,
-          "y": 448,
-          "x": 233,
           "type": "rect",
-          "id": "el-1786323395877",
-          "height": 200,
-          "radiusBR": 0,
           "fill": "#e1f6db",
+          "width": 300,
+          "height": 200,
+          "y": 448,
+          "radiusTR": 0,
+          "id": "el-1786323395877",
+          "radiusBR": 0,
           "opacity": 1,
-          "radiusBL": 0
+          "x": 233,
+          "radiusTL": 0
         }
-      ],
-      "id": "slide-1786323318739",
-      "name": "Slide 1"
+      ]
     }
   ],
   "canvasSettings": {
+    "backgroundColor": "#ffffff",
+    "gridSize": 20,
     "height": 1080,
     "nav": {
-      "buttonBottomColor": "#094A68",
-      "buttonInactiveColor": "#DCEBF2",
       "buttonFontSize": 14,
-      "buttonFontWeight": "700",
+      "buttonPaddingY": 8,
+      "buttonInactiveBottomColor": "#B8D4DF",
+      "navGap": 12,
+      "buttonTextColor": "#ffffff",
+      "buttonBottomColor": "#094A68",
       "buttonColor": "#0C5E82",
       "buttonInactiveTextColor": "#073048",
-      "buttonRadius": 8,
-      "navPosition": "bottom",
-      "buttonPaddingY": 8,
+      "buttonInactiveColor": "#DCEBF2",
       "buttonPaddingX": 20,
-      "buttonTextColor": "#ffffff",
-      "navGap": 12,
-      "buttonInactiveBottomColor": "#B8D4DF"
+      "buttonRadius": 8,
+      "buttonFontWeight": "700",
+      "navPosition": "bottom"
     },
-    "gridSize": 20,
     "snapToGrid": false,
-    "width": 1920,
-    "backgroundColor": "#ffffff"
-  }
+    "width": 1920
+  },
+  "activeIndex": 0
 }
