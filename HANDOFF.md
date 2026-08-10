@@ -9,156 +9,165 @@ instead — this file only covers what's transient.
 
 ## Not yet confirmed by the person (do this first if picking this back up)
 
-Everything below was verified working via local browser preview
-(serving the repo directly and driving it with Playwright — see
-CLAUDE.md's "Local preview" section) during the session, and all of it
-is merged to `main`. What's **not** yet confirmed: whether it's been
-pasted into the live Apps Script project and redeployed there, and
-exercised for real (including Save/Load, which can't be tested in local
-preview since that needs `google.script.run`). If picking this up,
-paste the current `AppScript/AnimatedSlidesV2.html`, `AppScript/
-NavBarJs.html`, `AppScript/SlideManagerJs.html`, and `AppScript/
-CanvasEditorJs.html` into the Apps Script editor, redeploy, and do a
-real save/load round-trip before treating v2 as done.
+Everything below was verified working via local browser preview (serving
+the repo directly and driving it with Playwright — see CLAUDE.md's
+"Local preview" section). **Nothing has touched Apps Script for real** —
+the deployed `AppScript/TabbedPanels.html` + module files exist and went
+through the 5-substitution pass, and the `PAGES` entry is uncommented,
+but none of it has actually been pasted into a live Apps Script project
+yet. Before treating Tabbed Panels as done: paste
+`AppScript/TabbedPanels.html`, `TabTypesJs.html`, `RichtextEditorJs.html`,
+`BlockRendererJs.html`, `TabNavJs.html`, `TabManagerJs.html` into the
+Apps Script editor (it already has `HistoryJs.html` — Tabbed Panels
+reuses that one as-is), redeploy, and do a real Save/Open/Rename/Delete
+round-trip, plus click through the Export flow once for real.
 
-## What's built and merged this session
+## What's built across this project's sessions on Tabbed Panels
 
-Picking up from an earlier session that had already shipped v2's core
-feature set (schema-driven elements, undo/redo, cross-slide linking,
-multi-select, project management) — this session added, in order:
+**Session 1** (scaffolding): resolved the open design questions
+(block-schema content model, hand-rolled rich text, block types), built
+the original `tools/tabbed-panels/` scaffold, smoke-tested it.
 
-- **`Code.gs` brought into the repo** — it existed only inside the live
-  Apps Script project before; now checked in at `AppScript/Code.gs`. Its
-  `GITHUB_OWNER`/`GITHUB_REPO` were placeholders (`your-org-or-username`
-  / `authoring-tools`) that would have made every save/load/delete/
-  rename call fail against a nonexistent repo — fixed to the real values.
-- **"Load from code"** — a new top-bar button that parses a previously
-  Exported HTML blob's embedded `const slides = ...;` / `const
-  canvasSettings = ...;` lines back into an editable project. Paired with
-  `tools/animated-slides-v2/ai-authoring/prompt.md` (+ `schema-
-  reference.json` + `example.txt`): a self-contained prompt an author can
-  paste into any LLM chat to storyboard a slide deck by answering a few
-  questions, then paste the generated code block straight into the tool.
-- **Bug fix**: layer reordering could silently revert after navigating
-  between slides. Root cause was `goToSlide()` resetting the tracked
-  stacking order to `null` on every transition, while the fallback it
-  fell back to (`Object.keys(elements)`) didn't actually match the
-  destination slide's real stored order once persisted/linked elements
-  were involved. Fixed in `slide-manager.js` / `SlideManagerJs.html`.
-- **Bug fix**: the layer panel's "bring forward" (up chevron) and "send
-  backward" (down chevron) buttons were swapped — `reorderLayer()`'s
-  direction math didn't match its own doc comment or the array's actual
-  bottom-to-top convention. Fixed.
-- **Shift-to-axis-lock dragging** — holding Shift while dragging an
-  element (single or multi-select) locks movement to whichever axis has
-  moved further from the drag's start, re-evaluated every frame.
-- **Left rail redesign** — was a 200px column with labeled buttons and an
-  always-visible layer list; now a 64px vertical stack of icon-only
-  buttons (4 add-element icons, a divider, then Link/Layers/Settings).
-  Layers and Settings each open their own non-blocking slide-out drawer
-  (`.side-panel`) instead of the layer list always taking up rail space
-  or Settings being a centered modal that covered the canvas while you
-  adjusted it. Opening one drawer closes the other, since both dock to
-  the same right edge.
-- **Settings drawer rebuilt twice** — first pass added slide-switch
-  toggles, square colour swatches, more spacing, and grouped "Button
-  colors" into Active/Inactive subsections with swatches in a row. A
-  second pass then rebuilt it again against a design mockup the person
-  supplied, which surfaced a few real discrepancies worth remembering if
-  touching this again:
-  - "Navigation" and a near-identical "Button Style" section in the
-    mockup turned out to be a mockup duplication, not two genuinely
-    different sections — merged back into one Navigation group.
-  - Snap to Grid ended up as an On/Off dropdown, not the slide switch
-    from the first pass — the person changed their mind after seeing it
-    in context.
-  - The Active/Inactive background on/off toggles added in the first
-    pass were dropped entirely — background is unconditionally shown
-    again, same as before that feature existed.
-  - The "Gap" (spacing between nav buttons) field was dropped from the
-    settings UI specifically — `navGap` still exists in the data model
-    and still drives real spacing at its default (12), it's just no
-    longer author-configurable from this panel.
-  - "Button colors" renamed to "Colours" (matches the "Colour, not
-    Color" house convention) and rebuilt as an actual 3-row × 2-column
-    table (Background/Text/Border × Active/Inactive) instead of two
-    toggle-headed subgroups.
-  - Every settings field group now renders through a shared 2-column CSS
-    grid, and sections are separated by a divider line, not just gap
-    spacing.
-- **Standalone JS modules extracted** — `tools/animated-slides-v2/`
-  previously only had `index.html`; the seven modules it `<script
-  src>`-loads (`element-types.js`, `element-renderer.js`, `canvas-
-  editor.js`, `history.js`, `slide-manager.js`, `layer-panel.js`,
-  `nav-bar.js`) didn't exist anywhere as standalone files, only baked
-  into the `AppScript/*Js.html` wrapper templates. Extracted verbatim, so
-  `index.html` now actually boots as a real standalone page — see
-  CLAUDE.md's "Local preview" section. This is also now the deployment
-  source of truth going forward: edit these files first, then reapply
-  the AppScript wrapper substitutions, rather than editing the
-  `AppScript/*Js.html` copies directly.
+**Session 2** (Apps Script deployment): generated `AppScript/
+TabbedPanels.html` + module wrapper files via the 5-substitution pass,
+uncommented the `PAGES` entry, opened PR #7.
 
-All of the above is merged to `main` via PRs #1 through #5.
+**Session 3** (this one — canvas redesign + new components, in response
+to a supplied mockup): a substantial rework, all pushed to PR #7's
+branch as follow-up commits.
 
-## What's next: Tabbed Panels
+- **Canvas redesign**: the authoring canvas is now a white "player card"
+  on a gray stage, with a genuinely WYSIWYG tab strip (underline +
+  overflow chevrons) — see CLAUDE.md's "Internal architecture" for the
+  new `tab-nav.js` module this required (mirrors `nav-bar.js`'s "reused
+  verbatim by editor and export" role). Tab add/rename/delete/reorder
+  moved out of the canvas entirely into a new Tabs drawer, since the
+  WYSIWYG strip only shows what a learner would actually see.
+- **New block types**: Badge (label + primary/secondary) and Table
+  (add/remove rows and columns in the property panel, plain-text cells).
+- **Heading changes**: levels expanded to h2/h3/h4, plus an optional
+  `subtitle` field (settled as a field on Heading rather than a separate
+  block type — see the clarifying-questions exchange in conversation).
+- **Paragraph changes**: added a text-align field (left/center/right/
+  justify).
+- **New global Styles drawer**: heading/subtitle size+colour, and
+  badge/button primary+secondary colour tables (background/text/border)
+  — a new `styles` object on project state (`defaultStyles()` in
+  `tab-manager.js`), read by `block-renderer.js` as a parameter so
+  a block only ever picks a *variant*, never a literal colour.
+- **Export built**: self-contained HTML bundle, same pattern as v2's
+  Export modal — fetches `tab-types.js`/`block-renderer.js`/`tab-nav.js`
+  in the repo-source version, embeds them as `MODULE_SOURCES` string
+  constants in the Apps-Script-deployed copy (generated programmatically
+  from the real files, not hand-typed, to avoid escaping mistakes).
+- **Real bug found and fixed via Playwright smoke testing**: the block
+  property panel would go blank after the very first block selection in
+  a session (`openPanel()` called `closePanel()`, whose "deselect if we
+  were on the property panel" check read the *stale* `activePanel` from
+  before the switch). Fixed by splitting the panel-hiding DOM work
+  (`hidePanels()`) out from the state-clearing `closePanel()`. Applied
+  to both the repo source and the deployed copy, then re-verified with
+  the exact repro sequence.
+- **Another real bug fixed proactively** (not from smoke testing, caught
+  during the styles/tab-manager rewrite): `getState()`/`setState()`
+  previously shallow-copied blocks (`{...block}`), which doesn't protect
+  nested arrays — `list.items` and (new) `table.rows` would share the
+  same array reference between an undo snapshot and the live block, so
+  editing the live block could silently corrupt an already-pushed undo
+  entry. Fixed with a `cloneBlock()` JSON round-trip.
 
-The person has said they're comfortable with v2 as it stands and wants
-to start a new tool: **Tabbed Panels** (tabs the learner navigates
-between; each tab holds formatted text, lists, and buttons linking out
-to external webpages). Nothing has been built for this yet — no folder,
-no `Code.gs` `PAGES` entry, no scaffolding. See CLAUDE.md's "Starting a
-new tool: Tabbed Panels" section for the open design questions worth
-resolving before writing much code (mainly: what the per-tab content
-model actually is — plain rich text vs. a small block schema).
+Every UI change in this session was verified via two rounds of
+Playwright smoke testing (initial pass across all 10 checks, then a
+targeted re-test of the exact bug-repro sequence after the fix) — see
+this session's conversation for the full checklist; both passed clean
+on the second round.
 
-## Standing "polish" list for v2 — not started
+**Session 4** (this one — follow-up request, still PR #7): replaced the
+Tabs drawer with a persistent bottom tab bar, and extended the Styles
+drawer with layout controls.
 
-1. Custom color pickers — the native browser color input is now a small
-   restyled square swatch rather than a full-width bar, but it's still
-   the native OS color picker underneath when clicked; a true custom
-   picker (matching the rest of the UI) hasn't been built.
-2. Icon library is thin — only 7 icons (star, heart, check-circle, info,
-   warning, flag, bookmark), all hand-coded SVG paths in
-   `element-renderer.js`'s `ICON_PATHS`.
-3. Touch/tablet support is incomplete — layer and slide drag-to-reorder
-   use native HTML5 drag-and-drop, which doesn't work on touchscreens.
-   Canvas drag/selection is fine (built on pointer events, not
-   mouse-specific ones).
-4. Narrow-window layout untested — the canvas column doesn't have a
-   defined behavior below a certain width.
-5. No accessibility pass anywhere — keyboard-only navigation, focus
-   states, screen-reader labels.
-6. Export modal is copy-paste only, no live preview of the result.
+- **Bottom tab bar** (`#editor-tab-bar`) replaces the side "Tabs"
+  drawer entirely — same role and layout as v2's `#editor-slide-bar`:
+  one live-content thumbnail per tab (`renderTabThumbnail()` reuses the
+  same `renderBlock()` the canvas uses, scaled down via CSS `transform`,
+  mirroring v2's `renderSlideThumbnailSVG()` trick), hover-revealed
+  duplicate/delete buttons, double-click-to-rename, native HTML5
+  drag-to-reorder, and a "+ Tab" button. The left rail's "Manage tabs"
+  icon is gone; the top tab-nav strip inside the player card now only
+  ever switches tabs.
+- **Styles drawer gained two sections**: "Layout" (a single "Spacing
+  between blocks" field — `styles.blockSpacing`, applied by setting
+  `#block-list`'s `style.gap` directly) and "Tab label" (font size +
+  vertical/horizontal padding — `styles.tabLabel`, passed to
+  `tab-nav.js`'s `renderTabNav()` as an optional `tabLabelStyle` param
+  and applied as inline styles on each `.tp-tabnav-tab` button).
+- Regenerated `AppScript/TabbedPanels.html`, `TabManagerJs.html`,
+  `TabNavJs.html` to match (including the `MODULE_SOURCES` Export
+  embedding, which needed the updated `tab-nav.js` re-baked in).
+- **Verified via a 10-point Playwright smoke test, passed clean on the
+  first round** — no bugs found this time (unlike session 3, which
+  found two real ones). Covered: left-rail button count, bottom bar
+  existence/thumbnails, add/switch-tab, thumbnail content reflecting
+  live edits, hover-reveal duplicate/delete, duplicate producing a
+  correctly-named copy, rename propagating to both the thumbnail label
+  and the active tab-nav strip, drag-reorder actually reordering the
+  DOM, and both new Styles fields (spacing, tab label font size) driving
+  real computed-style changes on `#block-list` and `.tp-tabnav-tab`.
 
-## Known deliberate scope boundaries — not bugs, don't "fix" these
+**Session 5** (this one — swatch consistency + Table styling, still PR
+#7): the person flagged, from a screenshot of v2's Canvas Settings
+drawer, that colour swatches across the Styles drawer weren't visually
+consistent, asked for hover tooltips naming what each swatch recolours,
+and asked how to add Table styling without overloading the panel.
 
-- Multi-select supports move/delete/duplicate as a group, but **not**
-  resize — resizing several different-typed elements as one operation
-  was explicitly descoped, not overlooked.
-- A plain click (no drag) on a member of a multi-selection narrows the
-  selection to just that element; click-and-drag moves the whole group.
-  This was a specific, deliberate fix per an explicit request.
-- `STORAGE_API_KEY` / `STORAGE_ENDPOINT` stay as plain placeholders in
-  repo source files, never scriptlets — only the Apps-Script-deployed
-  copies get the `<?!= ... ?>` swap. See CLAUDE.md's deployment
-  pipeline section for why.
-- The Active/Inactive nav-button background on/off toggle was built,
-  tested, and then explicitly removed again per the person's direction
-  during the settings-drawer mockup pass — don't reintroduce it as a
-  "missing feature" without checking first.
+- **Real bug found and fixed**: Badge/Button colour-table swatches had
+  never gotten the same sizing/rounding CSS rule the Headings/Subtitle
+  swatches had — they rendered as the unstyled native browser colour
+  input. Not a mockup mismatch, a genuine gap from when the colour-table
+  section was first built. Fixed by extending the shared selector.
+- **Hover tooltips added**: every swatch now has a `title` attribute
+  naming exactly what it recolours (e.g. "Background — Bordered").
+- **Table styling**: added as a global variant (`style`: bordered/plain
+  on the Table block, same pattern as Badge/Button) rather than raw
+  per-instance colour pickers — the person explicitly chose this option
+  when asked, specifically to avoid the property panel growing without
+  bound as more block types gain styling. `renderVariantColourTable()`
+  was generalized to take a `variants` param so Badges/Buttons/Tables
+  all share one function.
+- **Verified via an 8-point Playwright smoke test, passed clean on the
+  first round** — swatch sizing/tooltips confirmed identical across all
+  three sections, the new Tables colour-table structurally matches
+  Badges/Buttons, and changing a Tables swatch colour live-updated an
+  actual rendered table's header in the canvas.
+- **Backlog item logged, not started**: the person wants the same
+  swatch-consistency treatment (and likely the same tooltip pattern)
+  applied to Animated Slides v2's Canvas Settings drawer — explicitly
+  deferred as separate future work, not bundled into this session.
+
+## What's next
+
+1. **Do the real Apps Script round-trip** described above — still the
+   single most important unverified thing.
+2. **v2 Canvas Settings swatch consistency audit** — the backlog item
+   from this session. Not started; needs its own look at
+   `tools/animated-slides-v2/index.html`'s settings-panel CSS/JS.
+3. Everything under "What's NOT built yet" in CLAUDE.md's Tabbed Panels
+   section: touch/tablet drag-and-drop, accessibility pass, narrow-window
+   layout — standing gaps carried over from v2, not yet looked at here.
+4. Nothing else is currently flagged as missing from the reviewed scope
+   — the next likely direction is either the Apps Script verification
+   above, the v2 audit, or new feature requests from the person.
 
 ## Older, still-outstanding items from earlier in the project
 
 - GitHub → Apps Script auto-deploy via `clasp` — deferred at project
-  start, never revisited. Deployment is still a fully manual copy-paste
-  process into the Apps Script editor. Worth revisiting once Tabbed
-  Panels exists too, since by then there'll be two tools' worth of
-  `AppScript/*.html` files to keep hand-synced.
+  start, never revisited. Now genuinely two tools' worth of
+  `AppScript/*.html` files to hand-sync, worth revisiting sooner rather
+  than later.
 
 ## Where to find things
 
-`CLAUDE.md` has the architecture, conventions, the Apps Script
-deployment pipeline checklist, and the local-preview workflow. Read its
-"Starting a new tool: Tabbed Panels" section before writing Tabbed
-Panels code — it lists the shared foundation to build on and the open
-design questions worth settling first.
+`CLAUDE.md` has the architecture (including Tabbed Panels' full internal
+architecture, the project-wide styles system, and content-model
+decisions), conventions, the Apps Script deployment pipeline checklist,
+and the local-preview workflow.

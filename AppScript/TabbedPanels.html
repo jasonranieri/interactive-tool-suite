@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<title>Tabbed Panels</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<?!= include('DesignTokens'); ?>
+<?!= include('AppShellCss'); ?>
+<style>
+  #shell-main { min-height: 0; }
+
+  /* Left rail: one icon button per block type, then a divider, then the
+     Tabs/Styles drawer openers — same icon-only vertical stack pattern
+     as Animated Slides v2's left rail. */
+  #left-rail {
+    width: 64px; background: var(--surface); border-right: 1px solid var(--border);
+    padding: var(--space-4) var(--space-2); overflow-y: auto; flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+  }
+  .rail-divider { width: 28px; height: 1px; background: var(--border); margin: var(--space-1) 0; flex-shrink: 0; }
+  .add-block-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; flex-shrink: 0;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard);
+  }
+  .add-block-btn:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .add-block-btn.btn-active { border-color: var(--accent); background: var(--accent-soft); }
+  .add-block-btn i { font-size: 16px; color: var(--accent); }
+
+  #content-col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  /* Stage: gray well the "player card" sits in — matches the supplied
+     mockup rather than the flat white canvas the first scaffold had. */
+  #stage { flex: 1; overflow-y: auto; padding: var(--space-6); background: var(--surface-sunken); display: flex; justify-content: center; }
+  #player-card { width: 100%; max-width: 860px; height: fit-content; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden; display: flex; flex-direction: column; }
+
+  /* Tab nav (tab-nav.js) — WYSIWYG: this exact markup/CSS is what the
+     exported player renders too, so editing IS previewing. */
+  .tp-tabnav { display: flex; align-items: stretch; background: var(--paper); border-bottom: 1px solid var(--border); }
+  .tp-tabnav-chevron { flex-shrink: 0; width: 40px; border: none; background: transparent; color: var(--ink-faint); cursor: pointer; font-size: 13px; }
+  .tp-tabnav-chevron:hover:not(:disabled) { color: var(--accent); }
+  .tp-tabnav-chevron:disabled { opacity: 0.3; cursor: default; }
+  .tp-tabnav-strip { flex: 1; display: flex; overflow-x: auto; scrollbar-width: none; }
+  .tp-tabnav-strip::-webkit-scrollbar { display: none; }
+  .tp-tabnav-tab { flex-shrink: 0; padding: var(--space-4) var(--space-5) var(--space-3); border: none; background: transparent; cursor: pointer; font-family: var(--font-ui); font-size: var(--text-base); color: var(--ink-soft); border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tp-tabnav-tab:hover { color: var(--ink); }
+  .tp-tabnav-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+
+  /* Block list (the learner-facing preview surface, editable in place) */
+  #player-body { padding: var(--space-6); overflow-y: auto; }
+  #block-list { display: flex; flex-direction: column; gap: var(--space-3); }
+  #block-list-empty { text-align: center; color: var(--ink-faint); padding: var(--space-8) 0; }
+  .tp-block { position: relative; border: 2px solid transparent; border-radius: var(--radius-sm); padding: var(--space-2); cursor: pointer; }
+  .tp-block:hover { border-color: var(--border); }
+  .tp-block.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .tp-block.dragging { opacity: 0.4; }
+  .tp-block.drag-over { border-top: 2px solid var(--accent); }
+  .tp-block-controls { position: absolute; top: -14px; right: 4px; display: none; gap: 2px; }
+  .tp-block:hover .tp-block-controls, .tp-block.selected .tp-block-controls { display: flex; }
+  .tp-block-controls button { border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius-sm); width: 24px; height: 24px; cursor: pointer; font-size: 10px; color: var(--ink-soft); }
+  .tp-block-controls button:hover { color: var(--danger); border-color: var(--danger); }
+
+  /* Learner-facing block appearance (mirrors what Export ships).
+     Colour/size for headings/badges/buttons come from the project's
+     STYLES object and are applied as inline styles by block-renderer.js —
+     these rules are layout/shape only. */
+  .tp-heading { margin: 0; }
+  .tp-subtitle { margin: 4px 0 0; }
+  .tp-paragraph { line-height: 1.5; }
+  .tp-paragraph:empty::before { content: 'Empty text block'; color: var(--ink-faint); font-style: italic; }
+  .tp-list { margin: 0; padding-left: 1.4em; line-height: 1.5; }
+  .tp-button { display: inline-block; padding: 10px 20px; border-radius: var(--radius-sm); border: 1px solid transparent; text-decoration: none; font-weight: 600; font-size: var(--text-sm); }
+  .tp-badge { display: inline-block; padding: 3px 12px; border-radius: 999px; border: 1px solid transparent; font-size: var(--text-xs); font-weight: 600; }
+  .tp-table { border-collapse: collapse; width: 100%; font-size: var(--text-sm); }
+  .tp-table th, .tp-table td { border: 1px solid var(--border-strong); padding: 8px 10px; text-align: left; }
+  .tp-table th { background: var(--paper); font-weight: 600; }
+  .tp-block-separator hr { border: none; border-top: 1px solid var(--border); margin: var(--space-2) 0; }
+
+  /* Property / Tabs / Styles drawers — same .side-panel pattern as v2's
+     layers/settings drawers. Only one open at a time (openPanel()). */
+  .side-panel {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 340px; background: var(--surface);
+    border-left: 1px solid var(--border); box-shadow: var(--shadow-lg); transform: translateX(100%);
+    transition: transform var(--duration-base) var(--ease-standard); display: flex; flex-direction: column; z-index: 5; pointer-events: none;
+  }
+  .side-panel.active { transform: translateX(0); pointer-events: auto; }
+  .side-panel-header { display: flex; align-items: flex-start; justify-content: space-between; padding: var(--space-5); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .side-panel-header h2 { margin: 0; font-size: var(--text-lg); font-weight: 600; }
+  .side-panel-body { flex: 1; overflow-y: auto; padding: var(--space-5); }
+  #canvas-wrapper { position: relative; flex: 1; min-height: 0; display: flex; }
+
+  .popup-field { margin-bottom: var(--space-4); }
+  .popup-field:last-child { margin-bottom: 0; }
+  .popup-field label { display: block; font-size: 10px; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 4px; }
+  .popup-field input, .popup-field select, .popup-field textarea { width: 100%; font-family: var(--font-ui); font-size: var(--text-sm); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 5px 7px; box-sizing: border-box; }
+  .popup-field.toggle-field { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .popup-field.toggle-field label { margin-bottom: 0; }
+  /* Every colour swatch in this panel — Headings/Subtitle, and every
+     colour-table cell (Badges/Buttons/Tables) — shares this one rule so
+     they're visually identical wherever they appear. Previously only
+     `.popup-field` swatches had this styling and `.colour-table` ones
+     fell back to the unstyled native colour input; this was the actual
+     inconsistency, not the layout. */
+  .popup-field input[type=color], .colour-table input[type=color] { width: 40px; height: 40px; padding: 0; border-radius: var(--radius-sm); cursor: pointer; overflow: hidden; }
+  .popup-field input[type=color]::-webkit-color-swatch-wrapper, .colour-table input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+  .popup-field input[type=color]::-webkit-color-swatch, .colour-table input[type=color]::-webkit-color-swatch { border: none; border-radius: calc(var(--radius-sm) - 1px); }
+  .switch { position: relative; display: inline-block; width: 38px; height: 22px; flex-shrink: 0; }
+  .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .switch-slider { position: absolute; inset: 0; background: var(--border-strong); border-radius: 999px; cursor: pointer; transition: background var(--duration-fast) var(--ease-standard); }
+  .switch-slider::before { content: ""; position: absolute; height: 16px; width: 16px; left: 3px; top: 3px; background: #fff; border-radius: 50%; box-shadow: var(--shadow-sm); transition: transform var(--duration-fast) var(--ease-standard); }
+  .switch input:checked + .switch-slider { background: var(--accent); }
+  .switch input:checked + .switch-slider::before { transform: translateX(16px); }
+
+  /* Richtext toolbar/editable */
+  .tp-richtext-field { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .tp-richtext-toolbar { display: flex; gap: 2px; padding: 4px; background: var(--paper); border-bottom: 1px solid var(--border); }
+  .tp-richtext-btn { width: 26px; height: 26px; border: none; background: transparent; border-radius: var(--radius-sm); cursor: pointer; color: var(--ink-soft); }
+  .tp-richtext-btn:hover { background: var(--accent-soft); color: var(--accent); }
+  .tp-richtext-editable { min-height: 60px; padding: 8px; font-size: var(--text-sm); outline: none; }
+
+  .array-field-item { display: flex; align-items: flex-start; gap: 6px; margin-bottom: var(--space-2); }
+  .array-field-item .tp-richtext-field { flex: 1; }
+  .array-field-remove { border: none; background: none; color: var(--ink-faint); cursor: pointer; padding: 4px; flex-shrink: 0; }
+  .array-field-remove:hover { color: var(--danger); }
+  .array-field-add, .table-field-add-row { width: 100%; padding: 6px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.03em; background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; color: var(--ink-soft); margin-top: 4px; }
+
+  /* Property panel's table-grid editor — add/remove row and column */
+  .table-field-grid { display: flex; flex-direction: column; gap: 4px; overflow-x: auto; }
+  .table-field-row { display: flex; gap: 4px; align-items: center; }
+  .table-field-row input[type=text] { width: 90px; flex-shrink: 0; }
+  .table-field-remove-row, .table-field-remove-col { border: none; background: none; color: var(--ink-faint); cursor: pointer; flex-shrink: 0; width: 20px; }
+  .table-field-remove-row:hover, .table-field-remove-col:hover { color: var(--danger); }
+  .table-field-col-controls { display: flex; gap: 4px; margin-left: 24px; }
+  .table-field-col-controls span { width: 90px; flex-shrink: 0; }
+  .table-field-add-col { border: 1px dashed var(--border-strong); background: var(--surface); border-radius: var(--radius-sm); cursor: pointer; color: var(--ink-soft); width: 24px; flex-shrink: 0; }
+
+  /* Bottom tab bar — authoring-only tab management (add/duplicate/
+     rename/delete/reorder), separate from the WYSIWYG tab-nav shown
+     inside the player card. Same role and layout as v2's
+     #editor-slide-bar / .slide-tab-wrap. */
+  #editor-tab-bar { flex-shrink: 0; padding: var(--space-3) var(--space-5); background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: center; gap: var(--space-3); }
+  #editor-tab-bar .title-block { margin-right: var(--space-2); }
+  #tab-thumbs { display: flex; gap: var(--space-2); flex: 1; overflow-x: auto; padding: 8px 10px 6px 10px; margin: -8px -10px -6px -10px; }
+  .tab-thumb-wrap { position: relative; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .tab-thumb-container { position: relative; }
+  .tab-thumb {
+    width: 96px; height: 64px; border-radius: 4px; border: 2px solid var(--border);
+    overflow: hidden; background: white; cursor: pointer;
+  }
+  .tab-thumb.active { border-color: var(--ink); }
+  .tab-thumb-container.dragging { opacity: 0.4; }
+  .tab-thumb-container.drag-over .tab-thumb { border-color: var(--accent); }
+  .tab-thumb-name {
+    font-family: var(--font-mono); font-size: 10px; color: var(--ink-soft); max-width: 96px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; text-align: center;
+  }
+  .tab-thumb-name.active { color: var(--ink); font-weight: 600; }
+  .tab-thumb-rename-input {
+    font-family: var(--font-mono); font-size: var(--text-xs); padding: 2px 6px;
+    border-radius: var(--radius-sm); border: 1px solid var(--accent); outline: none; width: 90px; text-align: center;
+  }
+  .tab-thumb-delete {
+    display: none; position: absolute; top: -6px; right: -6px; width: 16px; height: 16px;
+    border-radius: 50%; border: 1px solid var(--border); background: white; color: var(--ink-soft);
+    font-size: 10px; line-height: 1; cursor: pointer; align-items: center; justify-content: center;
+  }
+  .tab-thumb-container:hover .tab-thumb-delete { display: flex; }
+  .tab-thumb-delete:hover { background: var(--danger); color: white; border-color: var(--danger); }
+  .tab-thumb-duplicate {
+    display: none; position: absolute; top: -6px; left: -6px; width: 16px; height: 16px;
+    border-radius: 50%; border: 1px solid var(--border); background: white; color: var(--ink-soft);
+    font-size: 9px; line-height: 1; cursor: pointer; align-items: center; justify-content: center;
+  }
+  .tab-thumb-container:hover .tab-thumb-duplicate { display: flex; }
+  .tab-thumb-duplicate:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+  /* Styles drawer */
+  .settings-section { margin-bottom: var(--space-5); padding-bottom: var(--space-5); border-bottom: 1px solid var(--border); }
+  .settings-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .settings-section h3 { margin: 0 0 var(--space-3); font-size: var(--text-sm); font-weight: 600; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .colour-table { display: grid; grid-template-columns: auto 1fr 1fr; column-gap: var(--space-4); row-gap: var(--space-3); align-items: center; margin-top: var(--space-3); }
+  .colour-table-head { font-size: 10px; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.03em; text-align: left; }
+  .colour-table-row-label { font-size: var(--text-sm); color: var(--ink); margin: 0; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div id="shell">
+  <div id="top-bar">
+    <div class="top-bar-left">
+      <a href="<?!= baseUrl ?>" class="hub-link" title="Back to hub">&larr;</a>
+      <div class="tool-identity">
+        <div class="title-block">Tool &middot; Tabbed Panels</div>
+        <h1 id="display-project-name">Untitled project</h1>
+        <span id="unsaved-dot" title="Unsaved changes" style="display:none; width:8px; height:8px; border-radius:50%; background:var(--warn); margin-left:8px; vertical-align:middle;"></span>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <span id="shell-status" class="status-pill"><span class="dot"></span>Not connected</span>
+      <div class="top-bar-divider"></div>
+      <button class="btn btn-secondary" onclick="newProject()">New</button>
+      <button class="btn btn-secondary" onclick="Shell.openModal('open-modal'); refreshProjectList();">Open</button>
+      <div class="top-bar-divider"></div>
+      <button class="btn btn-secondary" onclick="openExportModal()">Export</button>
+      <div class="top-bar-divider"></div>
+      <button class="btn btn-secondary" id="undo-btn" onclick="history.undo()">Undo</button>
+      <button class="btn btn-secondary" id="redo-btn" onclick="history.redo()">Redo</button>
+      <div class="top-bar-divider"></div>
+      <button class="btn btn-primary" onclick="saveProject()"><i class="fa-solid fa-cloud-arrow-up"></i> Save</button>
+    </div>
+  </div>
+
+  <div id="shell-main" style="display:flex;">
+    <div id="left-rail"></div>
+
+    <div id="content-col">
+      <div id="canvas-wrapper">
+        <div id="stage">
+          <div id="player-card">
+            <div id="tabnav-host"></div>
+            <div id="player-body"><div id="block-list"></div></div>
+          </div>
+        </div>
+
+        <div class="side-panel" id="property-panel">
+          <div class="side-panel-header">
+            <h2>Block settings</h2>
+            <button class="modal-close" onclick="closePanel()">&times;</button>
+          </div>
+          <div class="side-panel-body" id="property-panel-body"></div>
+        </div>
+
+        <div class="side-panel" id="styles-panel">
+          <div class="side-panel-header">
+            <h2>Styles</h2>
+            <button class="modal-close" onclick="closePanel()">&times;</button>
+          </div>
+          <div class="side-panel-body" id="styles-panel-body"></div>
+        </div>
+      </div>
+
+      <div id="editor-tab-bar">
+        <div class="title-block">Tabs (editor)</div>
+        <div id="tab-thumbs"></div>
+        <button class="btn btn-secondary" onclick="addTabWithHistory()">+ Tab</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Open project modal -->
+<div class="modal-overlay" id="open-modal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div><div class="title-block">Open</div><h2>Your projects</h2></div>
+      <button class="modal-close" onclick="Shell.closeModal('open-modal')">&times;</button>
+    </div>
+    <div class="modal-body"><div id="project-list"></div></div>
+  </div>
+</div>
+
+<!-- Export modal -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal-dialog wide">
+    <div class="modal-header">
+      <div><div class="title-block">Export</div><h2>Self-contained HTML</h2></div>
+      <button class="modal-close" onclick="Shell.closeModal('export-modal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--ink-soft); margin-top:0;">Paste this into an Articulate 360 web object (or any HTML embed).</p>
+      <textarea id="export-textarea" readonly style="width:100%; height:320px; font-family:var(--font-mono); font-size:11px; box-sizing:border-box; border:1px solid var(--border); border-radius:var(--radius-sm); padding:var(--space-3);"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="copyExportCode()">Copy code</button>
+    </div>
+  </div>
+</div>
+
+<?!= include('AppShellJs'); ?>
+<?!= include('StorageConnectorJs'); ?>
+<?!= include('TabTypesJs'); ?>
+<?!= include('RichtextEditorJs'); ?>
+<?!= include('BlockRendererJs'); ?>
+<?!= include('TabNavJs'); ?>
+<?!= include('TabManagerJs'); ?>
+<?!= include('HistoryJs'); ?>
+<script>
+  const TOOL_ID = 'tabbed-panels';
+  // Same shared backend as every other tool, distinguished by TOOL_ID —
+  // see animated-slides-v2's STORAGE_ENDPOINT for why this is a fixed
+  // literal rather than templated: it's the same Apps-Script-hosted
+  // storage-backend.gs deployment across the whole suite. The API key
+  // still comes from Script Properties at render time (never hand-pasted)
+  // — see CLAUDE.md's deployment pipeline section.
+  const STORAGE_ENDPOINT = "https://script.google.com/a/macros/syd.catholic.edu.au/s/AKfycbwj2Yk2R8o0ffnPBCO6gi-rRxfB1ETeZ6Rm61IeWXjQumpE0PUCfiPQrxDyXpe_HHK5Xw/exec";
+  const STORAGE_API_KEY = <?!= JSON.stringify(storageApiKey); ?>;
+  Storage.configure(STORAGE_ENDPOINT, STORAGE_API_KEY);
+
+  let currentProjectName = null;
+  let hasUnsavedChanges = false;
+  let selectedBlockId = null;
+  let activePanel = null; // 'property' | 'styles' | null
+
+  const tabManager = new TabManager({ tabs: null, styles: null });
+  const history = new History({
+    getState: () => tabManager.getState(),
+    setState: (s) => tabManager.setState(s),
+    onChange: () => {
+      document.getElementById('undo-btn').disabled = !history.canUndo();
+      document.getElementById('redo-btn').disabled = !history.canRedo();
+    },
+  });
+
+  tabManager.onChange = () => { markUnsaved(); renderAll(); };
+
+  function markUnsaved() {
+    hasUnsavedChanges = true;
+    document.getElementById('unsaved-dot').style.display = 'inline-block';
+  }
+  function markSaved() {
+    hasUnsavedChanges = false;
+    document.getElementById('unsaved-dot').style.display = 'none';
+  }
+
+  /* ---- Panel management: property / styles drawers, one at a time ---- */
+
+  // Hides every panel's DOM state without touching selectedBlockId — the
+  // shared first step of both closePanel() and openPanel(). Keeping this
+  // separate from closePanel() is the whole fix for a real bug found
+  // during smoke testing: openPanel() used to call closePanel() itself,
+  // and closePanel()'s "deselect if we were on the property panel" check
+  // ran against the STALE activePanel from before the switch — so
+  // selecting any block after the first one in a session immediately
+  // wiped selectedBlockId back to null and left the panel blank.
+  function hidePanels() {
+    ['property-panel', 'styles-panel'].forEach((id) => document.getElementById(id).classList.remove('active'));
+    document.getElementById('styles-toggle-btn')?.classList.remove('btn-active');
+  }
+
+  function closePanel() {
+    hidePanels();
+    selectedBlockId = null;
+    activePanel = null;
+    renderBlockList();
+  }
+
+  function openPanel(name) {
+    hidePanels();
+    activePanel = name;
+    if (name === 'styles') {
+      document.getElementById('styles-panel').classList.add('active');
+      document.getElementById('styles-toggle-btn').classList.add('btn-active');
+      renderStylesPanel();
+    } else if (name === 'property') {
+      document.getElementById('property-panel').classList.add('active');
+      renderPropertyPanel();
+    }
+  }
+
+  /* ---- Left rail: one "add block" button per BLOCK_TYPES entry, then Styles ---- */
+
+  function renderLeftRail() {
+    const rail = document.getElementById('left-rail');
+    rail.innerHTML = '';
+    Object.entries(BLOCK_TYPES).forEach(([type, schema]) => {
+      const btn = document.createElement('button');
+      btn.className = 'add-block-btn';
+      btn.title = 'Add ' + schema.label;
+      btn.setAttribute('aria-label', 'Add ' + schema.label);
+      btn.innerHTML = `<i class="fa-solid ${schema.icon}"></i>`;
+      btn.addEventListener('click', () => {
+        history.beginAction();
+        const id = tabManager.addBlock(type, selectedBlockId);
+        history.commitAction();
+        selectBlock(id);
+      });
+      rail.appendChild(btn);
+    });
+
+    const divider = document.createElement('div');
+    divider.className = 'rail-divider';
+    rail.appendChild(divider);
+
+    const stylesBtn = document.createElement('button');
+    stylesBtn.className = 'add-block-btn';
+    stylesBtn.id = 'styles-toggle-btn';
+    stylesBtn.title = 'Styles';
+    stylesBtn.setAttribute('aria-label', 'Global styles');
+    stylesBtn.innerHTML = '<i class="fa-solid fa-palette"></i>';
+    stylesBtn.addEventListener('click', () => activePanel === 'styles' ? closePanel() : openPanel('styles'));
+    rail.appendChild(stylesBtn);
+  }
+
+  /* ---- Tab nav (WYSIWYG, tab-nav.js) ---- */
+
+  function renderTabStrip() {
+    renderTabNav(document.getElementById('tabnav-host'), {
+      tabs: tabManager.tabs,
+      activeTabId: tabManager.activeTabId,
+      onSelect: (id) => { closePanel(); tabManager.setActiveTab(id); },
+      tabLabelStyle: tabManager.styles.tabLabel,
+    });
+  }
+
+  /* ---- Bottom tab bar: thumbnails + add/duplicate/rename/delete/reorder —
+     kept out of the WYSIWYG canvas, same role as v2's slide bar. ---- */
+
+  function renderTabThumbnail(tab) {
+    // Renders the SAME renderBlock() the real canvas uses, at a fixed
+    // content width, then scales the whole thing down via CSS transform —
+    // no separate "how do I draw a thumbnail" logic to keep in sync with
+    // the real canvas. Purely visual (pointer-events: none), cropped from
+    // the top like a browser tab preview when content overflows the box.
+    const THUMB_W = 96, THUMB_H = 64, CONTENT_W = 400;
+    const scale = THUMB_W / CONTENT_W;
+
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = `width:${THUMB_W}px; height:${THUMB_H}px; overflow:hidden; position:relative; background:#fff;`;
+
+    const inner = document.createElement('div');
+    inner.style.cssText = `width:${CONTENT_W}px; transform:scale(${scale}); transform-origin:top left; padding:12px; pointer-events:none; display:flex; flex-direction:column; gap:${tabManager.styles.blockSpacing}px;`;
+    tab.blocks.forEach((data) => {
+      try { inner.appendChild(renderBlock(data, tabManager.styles)); } catch (err) { /* a malformed block shouldn't break the whole thumbnail row */ }
+    });
+    wrapper.appendChild(inner);
+    return wrapper;
+  }
+
+  function renderTabBar() {
+    const container = document.getElementById('tab-thumbs');
+    container.innerHTML = '';
+    let draggedId = null;
+
+    tabManager.tabs.forEach((tab) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'tab-thumb-wrap';
+
+      const thumbContainer = document.createElement('div');
+      thumbContainer.className = 'tab-thumb-container';
+      thumbContainer.draggable = true;
+      thumbContainer.dataset.tabId = tab.id;
+
+      const thumb = document.createElement('div');
+      thumb.className = 'tab-thumb' + (tab.id === tabManager.activeTabId ? ' active' : '');
+      thumb.appendChild(renderTabThumbnail(tab));
+      thumb.addEventListener('click', () => { closePanel(); tabManager.setActiveTab(tab.id); });
+
+      const dup = document.createElement('button');
+      dup.className = 'tab-thumb-duplicate';
+      dup.innerHTML = '<i class="fa-regular fa-copy"></i>';
+      dup.title = 'Duplicate tab';
+      dup.addEventListener('click', (e) => {
+        e.stopPropagation();
+        history.beginAction();
+        tabManager.duplicateTab(tab.id);
+        history.commitAction();
+      });
+      thumbContainer.appendChild(thumb);
+      thumbContainer.appendChild(dup);
+
+      // Only offer delete when there's more than one tab — TabManager
+      // itself already refuses to delete the last one, but hiding the
+      // button here is clearer than letting someone click it and have
+      // nothing happen.
+      if (tabManager.tabs.length > 1) {
+        const del = document.createElement('button');
+        del.className = 'tab-thumb-delete';
+        del.innerHTML = '&times;';
+        del.title = 'Delete tab';
+        del.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const ok = await Shell.confirm(`Delete "${tab.title}"?`, { heading: 'Delete tab', okLabel: 'Delete', danger: true });
+          if (!ok) return;
+          history.beginAction();
+          tabManager.deleteTab(tab.id);
+          history.commitAction();
+        });
+        thumbContainer.appendChild(del);
+      }
+
+      thumbContainer.addEventListener('dragstart', () => { draggedId = tab.id; thumbContainer.classList.add('dragging'); });
+      thumbContainer.addEventListener('dragend', () => {
+        thumbContainer.classList.remove('dragging');
+        container.querySelectorAll('.tab-thumb-container').forEach((c) => c.classList.remove('drag-over'));
+      });
+      thumbContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (draggedId !== null && draggedId !== tab.id) thumbContainer.classList.add('drag-over');
+      });
+      thumbContainer.addEventListener('dragleave', () => thumbContainer.classList.remove('drag-over'));
+      thumbContainer.addEventListener('drop', (e) => {
+        e.preventDefault();
+        thumbContainer.classList.remove('drag-over');
+        if (draggedId === null || draggedId === tab.id) return;
+        history.beginAction();
+        tabManager.moveTabAfter(draggedId, tab.id);
+        history.commitAction();
+      });
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'tab-thumb-name' + (tab.id === tabManager.activeTabId ? ' active' : '');
+      nameEl.textContent = tab.title;
+      nameEl.addEventListener('click', () => { closePanel(); tabManager.setActiveTab(tab.id); });
+      nameEl.addEventListener('dblclick', () => startRenameTab(wrap, nameEl, tab.id));
+
+      wrap.appendChild(thumbContainer);
+      wrap.appendChild(nameEl);
+      container.appendChild(wrap);
+    });
+  }
+
+  function startRenameTab(wrap, nameEl, tabId) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'tab-thumb-rename-input';
+    input.value = tabManager.tabs.find((t) => t.id === tabId).title;
+    wrap.replaceChild(input, nameEl);
+    input.focus();
+    input.select();
+
+    let committed = false;
+    function commit() {
+      if (committed) return;
+      committed = true;
+      const newName = input.value.trim();
+      history.beginAction();
+      tabManager.renameTab(tabId, newName || tabManager.tabs.find((t) => t.id === tabId).title);
+      history.commitAction();
+    }
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') input.blur();
+      if (e.key === 'Escape') { committed = true; renderTabBar(); }
+    });
+  }
+
+  function addTabWithHistory() {
+    history.beginAction();
+    tabManager.addTab();
+    history.commitAction();
+  }
+
+  /* ---- Block list (content area) ---- */
+
+  function renderBlockList() {
+    const tab = tabManager.getActiveTab();
+    const container = document.getElementById('block-list');
+    container.innerHTML = '';
+    container.style.gap = tabManager.styles.blockSpacing + 'px';
+
+    if (tab.blocks.length === 0) {
+      const empty = document.createElement('div');
+      empty.id = 'block-list-empty';
+      empty.textContent = 'No blocks yet — add one from the left rail.';
+      container.appendChild(empty);
+      return;
+    }
+
+    tab.blocks.forEach((data) => {
+      const el = renderBlock(data, tabManager.styles); // block-renderer.js — authoring-unaware
+      el.classList.toggle('selected', data.id === selectedBlockId);
+      el.draggable = true;
+
+      const controls = document.createElement('div');
+      controls.className = 'tp-block-controls';
+      const delBtn = document.createElement('button');
+      delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+      delBtn.title = 'Delete block';
+      delBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        history.beginAction();
+        tabManager.deleteBlock(data.id);
+        history.commitAction();
+        if (selectedBlockId === data.id) closePanel();
+      });
+      controls.appendChild(delBtn);
+      el.appendChild(controls);
+
+      el.addEventListener('click', () => selectBlock(data.id));
+      el.addEventListener('dragstart', () => el.classList.add('dragging'));
+      el.addEventListener('dragend', () => el.classList.remove('dragging'));
+      el.addEventListener('dragover', (e) => { e.preventDefault(); el.classList.add('drag-over'); });
+      el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+      el.addEventListener('drop', (e) => {
+        e.preventDefault();
+        el.classList.remove('drag-over');
+        const draggedId = container.querySelector('.dragging')?.dataset.blockId;
+        if (!draggedId) return;
+        history.beginAction();
+        tabManager.moveBlockAfter(draggedId, data.id);
+        history.commitAction();
+      });
+
+      container.appendChild(el);
+    });
+  }
+
+  /* ---- Property panel (schema-driven, mirrors v2's settings-panel generation) ---- */
+
+  function selectBlock(id) {
+    selectedBlockId = id;
+    openPanel('property');
+    renderBlockList();
+  }
+
+  function renderPropertyPanel() {
+    const body = document.getElementById('property-panel-body');
+    body.innerHTML = '';
+    if (!selectedBlockId) return;
+    const tab = tabManager.getActiveTab();
+    const data = tab.blocks.find((b) => b.id === selectedBlockId);
+    if (!data) return;
+    const schema = BLOCK_TYPES[data.type];
+
+    document.querySelector('#property-panel .side-panel-header h2').textContent = schema.label + ' settings';
+
+    let pendingAction = false;
+    function begin() { if (!pendingAction) { history.beginAction(); pendingAction = true; } }
+    function commit(patch) { tabManager.updateBlock(data.id, patch); }
+    function commitEnd() { history.commitAction(); pendingAction = false; }
+
+    Object.entries(schema.fields).forEach(([key, field]) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'popup-field';
+      const label = document.createElement('label');
+      label.textContent = field.label;
+      wrap.appendChild(label);
+
+      if (field.type === 'richtext') {
+        const holder = document.createElement('div');
+        attachRichTextField(holder, {
+          value: data[key],
+          inline: field.inline,
+          onChange: (html) => { begin(); commit({ [key]: html }); commitEnd(); },
+        });
+        wrap.appendChild(holder);
+      } else if (field.type === 'select') {
+        const select = document.createElement('select');
+        field.options.forEach(([val, text]) => {
+          const opt = document.createElement('option');
+          opt.value = val; opt.textContent = text;
+          if (val === data[key]) opt.selected = true;
+          select.appendChild(opt);
+        });
+        select.addEventListener('change', () => { begin(); commit({ [key]: select.value }); commitEnd(); });
+        wrap.appendChild(select);
+      } else if (field.type === 'boolean') {
+        wrap.classList.add('toggle-field');
+        const switchLabel = document.createElement('label');
+        switchLabel.className = 'switch';
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = !!data[key];
+        input.addEventListener('change', () => { begin(); commit({ [key]: input.checked }); commitEnd(); });
+        const slider = document.createElement('span');
+        slider.className = 'switch-slider';
+        switchLabel.appendChild(input);
+        switchLabel.appendChild(slider);
+        wrap.appendChild(switchLabel);
+      } else if (field.type === 'array') {
+        wrap.appendChild(renderArrayField(data, key, field, begin, commit, commitEnd));
+      } else if (field.type === 'table') {
+        wrap.appendChild(renderTableField(data, key, begin, commit, commitEnd));
+      } else {
+        // text / url
+        const input = document.createElement('input');
+        input.type = field.type === 'url' ? 'url' : 'text';
+        input.value = data[key];
+        input.addEventListener('focus', begin);
+        input.addEventListener('input', () => commit({ [key]: input.value }));
+        input.addEventListener('blur', commitEnd);
+        wrap.appendChild(input);
+      }
+
+      body.appendChild(wrap);
+    });
+  }
+
+  function renderArrayField(data, key, field, begin, commit, commitEnd) {
+    const listHolder = document.createElement('div');
+    const items = data[key];
+    items.forEach((itemVal, i) => {
+      const row = document.createElement('div');
+      row.className = 'array-field-item';
+      const itemHolder = document.createElement('div');
+      attachRichTextField(itemHolder, {
+        value: itemVal,
+        inline: field.of.inline,
+        onChange: (html) => { begin(); items[i] = html; commit({ [key]: items }); commitEnd(); },
+      });
+      row.appendChild(itemHolder);
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'array-field-remove';
+      removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      removeBtn.title = 'Remove item';
+      removeBtn.addEventListener('click', () => {
+        if (items.length <= 1) return; // keep at least one item
+        history.beginAction();
+        items.splice(i, 1);
+        commit({ [key]: items });
+        history.commitAction();
+        renderPropertyPanel();
+      });
+      row.appendChild(removeBtn);
+      listHolder.appendChild(row);
+    });
+    const addBtn = document.createElement('button');
+    addBtn.className = 'array-field-add';
+    addBtn.textContent = '+ Add item';
+    addBtn.addEventListener('click', () => {
+      history.beginAction();
+      items.push('');
+      commit({ [key]: items });
+      history.commitAction();
+      renderPropertyPanel();
+    });
+    listHolder.appendChild(addBtn);
+    return listHolder;
+  }
+
+  /** The Table block's `rows` field: a 2D array of plain-text cells.
+   *  Renders an editable grid with per-row remove buttons, per-column
+   *  remove buttons (a small control row above the grid), and add-row /
+   *  add-column controls. Every mutation replaces the whole `rows` array
+   *  in one history step, rather than tracking cell-level undo — simplest
+   *  correct behavior at this scale. */
+  function renderTableField(data, key, begin, commit, commitEnd) {
+    const holder = document.createElement('div');
+    const rows = data[key];
+    const colCount = rows[0] ? rows[0].length : 0;
+
+    function change(mutator) {
+      history.beginAction();
+      mutator();
+      commit({ [key]: rows });
+      history.commitAction();
+      renderPropertyPanel();
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'table-field-grid';
+
+    if (colCount > 0) {
+      const colControls = document.createElement('div');
+      colControls.className = 'table-field-col-controls';
+      for (let c = 0; c < colCount; c++) {
+        const btn = document.createElement('button');
+        btn.className = 'table-field-remove-col';
+        btn.title = 'Remove column';
+        btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        btn.disabled = colCount <= 1;
+        const col = c;
+        btn.addEventListener('click', () => change(() => rows.forEach((r) => r.splice(col, 1))));
+        colControls.appendChild(btn);
+      }
+      grid.appendChild(colControls);
+    }
+
+    rows.forEach((row, r) => {
+      const rowEl = document.createElement('div');
+      rowEl.className = 'table-field-row';
+      row.forEach((cell, c) => {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = cell;
+        input.addEventListener('focus', begin);
+        input.addEventListener('input', () => { rows[r][c] = input.value; commit({ [key]: rows }); });
+        input.addEventListener('blur', commitEnd);
+        rowEl.appendChild(input);
+      });
+      const rmRow = document.createElement('button');
+      rmRow.className = 'table-field-remove-row';
+      rmRow.title = 'Remove row';
+      rmRow.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      rmRow.disabled = rows.length <= 1;
+      rmRow.addEventListener('click', () => change(() => rows.splice(r, 1)));
+      rowEl.appendChild(rmRow);
+      grid.appendChild(rowEl);
+    });
+
+    holder.appendChild(grid);
+
+    const addRowBtn = document.createElement('button');
+    addRowBtn.className = 'table-field-add-row';
+    addRowBtn.textContent = '+ Add row';
+    addRowBtn.addEventListener('click', () => change(() => rows.push(new Array(colCount || 1).fill(''))));
+    holder.appendChild(addRowBtn);
+
+    const addColBtn = document.createElement('button');
+    addColBtn.className = 'array-field-add';
+    addColBtn.textContent = '+ Add column';
+    addColBtn.addEventListener('click', () => change(() => rows.forEach((r) => r.push(''))));
+    holder.appendChild(addColBtn);
+
+    return holder;
+  }
+
+  /* ---- Styles drawer (global — headings/subtitle typography, badge/button colours) ---- */
+
+  const STYLE_TYPOGRAPHY_FIELDS = [
+    ['h2', 'H2'], ['h3', 'H3'], ['h4', 'H4'], ['subtitle', 'Subtitle'],
+  ];
+
+  function renderStylesPanel() {
+    const body = document.getElementById('styles-panel-body');
+    body.innerHTML = '';
+
+    const typeSection = document.createElement('div');
+    typeSection.className = 'settings-section';
+    typeSection.innerHTML = '<h3>Headings &amp; subtitle</h3>';
+    STYLE_TYPOGRAPHY_FIELDS.forEach(([key, label]) => {
+      const grid = document.createElement('div');
+      grid.className = 'field-grid';
+
+      const sizeWrap = document.createElement('div');
+      sizeWrap.className = 'popup-field';
+      sizeWrap.innerHTML = `<label>${label} size</label>`;
+      const sizeInput = document.createElement('input');
+      sizeInput.type = 'number';
+      sizeInput.min = 8; sizeInput.max = 96;
+      sizeInput.value = tabManager.styles[key].size;
+      sizeInput.addEventListener('focus', () => history.beginAction());
+      sizeInput.addEventListener('input', () => { tabManager.styles[key].size = Number(sizeInput.value) || tabManager.styles[key].size; markUnsaved(); renderBlockList(); });
+      sizeInput.addEventListener('blur', () => history.commitAction());
+      sizeWrap.appendChild(sizeInput);
+
+      const colorWrap = document.createElement('div');
+      colorWrap.className = 'popup-field';
+      colorWrap.innerHTML = `<label>${label} colour</label>`;
+      const colorInput = document.createElement('input');
+      colorInput.type = 'color';
+      colorInput.title = `${label} colour`; // hover tooltip — which aspect this swatch recolours
+      colorInput.value = tabManager.styles[key].color;
+      colorInput.addEventListener('input', () => {
+        history.beginAction();
+        tabManager.styles[key].color = colorInput.value;
+        history.commitAction();
+        markUnsaved(); renderBlockList();
+      });
+      colorWrap.appendChild(colorInput);
+
+      grid.appendChild(sizeWrap);
+      grid.appendChild(colorWrap);
+      typeSection.appendChild(grid);
+    });
+    body.appendChild(typeSection);
+
+    body.appendChild(renderLayoutSection());
+    body.appendChild(renderTabLabelSection());
+
+    body.appendChild(renderVariantColourTable('Badges', 'badge'));
+    body.appendChild(renderVariantColourTable('Buttons', 'button'));
+    body.appendChild(renderVariantColourTable('Tables', 'table', [['bordered', 'Bordered'], ['plain', 'Plain']]));
+  }
+
+  /** A single labeled number input bound via getValue/setValue callbacks,
+   *  wrapped as its own history step — shared by the Layout and Tab
+   *  label sections below instead of repeating the same boilerplate. */
+  function renderStyleNumberField(label, getValue, setValue, { min = 0, max = 200 } = {}) {
+    const wrap = document.createElement('div');
+    wrap.className = 'popup-field';
+    const labelEl = document.createElement('label');
+    labelEl.textContent = label;
+    wrap.appendChild(labelEl);
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = min; input.max = max;
+    input.value = getValue();
+    input.addEventListener('focus', () => history.beginAction());
+    input.addEventListener('input', () => { setValue(Number(input.value) || getValue()); markUnsaved(); renderBlockList(); renderTabStrip(); });
+    input.addEventListener('blur', () => history.commitAction());
+    wrap.appendChild(input);
+    return wrap;
+  }
+
+  function renderLayoutSection() {
+    const section = document.createElement('div');
+    section.className = 'settings-section';
+    section.innerHTML = '<h3>Layout</h3>';
+    section.appendChild(renderStyleNumberField(
+      'Spacing between blocks',
+      () => tabManager.styles.blockSpacing,
+      (v) => { tabManager.styles.blockSpacing = v; },
+      { min: 0, max: 80 },
+    ));
+    return section;
+  }
+
+  function renderTabLabelSection() {
+    const section = document.createElement('div');
+    section.className = 'settings-section';
+    section.innerHTML = '<h3>Tab label</h3>';
+    const grid = document.createElement('div');
+    grid.className = 'field-grid';
+    grid.appendChild(renderStyleNumberField(
+      'Font size',
+      () => tabManager.styles.tabLabel.fontSize,
+      (v) => { tabManager.styles.tabLabel.fontSize = v; },
+      { min: 10, max: 32 },
+    ));
+    grid.appendChild(renderStyleNumberField(
+      'Vertical padding',
+      () => tabManager.styles.tabLabel.paddingY,
+      (v) => { tabManager.styles.tabLabel.paddingY = v; },
+      { min: 0, max: 40 },
+    ));
+    grid.appendChild(renderStyleNumberField(
+      'Horizontal padding',
+      () => tabManager.styles.tabLabel.paddingX,
+      (v) => { tabManager.styles.tabLabel.paddingX = v; },
+      { min: 0, max: 60 },
+    ));
+    section.appendChild(grid);
+    return section;
+  }
+
+  /** Badge, Button, and Table styles all share the exact same shape
+   *  (a set of named variants × background/text/border), so one function
+   *  renders all three — same "Colours" table pattern v2 uses for nav
+   *  Active/Inactive, generalized to whatever variant keys/labels a
+   *  caller passes rather than hardcoding "Primary"/"Secondary". Always
+   *   2 swatches wide (one column per variant) regardless of caller, and
+   *  every swatch gets a hover tooltip naming exactly what it recolours
+   *  — e.g. "Background — Bordered" — since a bare colour square alone
+   *  doesn't say which aspect of the block it controls. */
+  function renderVariantColourTable(heading, groupKey, variants = [['primary', 'Primary'], ['secondary', 'Secondary']]) {
+    const section = document.createElement('div');
+    section.className = 'settings-section';
+    const h3 = document.createElement('h3');
+    h3.textContent = heading;
+    section.appendChild(h3);
+
+    const table = document.createElement('div');
+    table.className = 'colour-table';
+    table.appendChild(document.createElement('div')); // blank corner cell
+    variants.forEach(([, variantLabel]) => {
+      const head = document.createElement('div');
+      head.className = 'colour-table-head';
+      head.textContent = variantLabel;
+      table.appendChild(head);
+    });
+
+    [['bg', 'Background'], ['text', 'Text'], ['border', 'Border']].forEach(([prop, label]) => {
+      const rowLabel = document.createElement('p');
+      rowLabel.className = 'colour-table-row-label';
+      rowLabel.textContent = label;
+      table.appendChild(rowLabel);
+
+      variants.forEach(([variant, variantLabel]) => {
+        const input = document.createElement('input');
+        input.type = 'color';
+        input.title = `${label} — ${variantLabel}`;
+        input.value = tabManager.styles[groupKey][variant][prop];
+        input.addEventListener('input', () => {
+          history.beginAction();
+          tabManager.styles[groupKey][variant][prop] = input.value;
+          history.commitAction();
+          markUnsaved(); renderBlockList();
+        });
+        table.appendChild(input);
+      });
+    });
+
+    section.appendChild(table);
+    return section;
+  }
+
+  function renderAll() {
+    renderTabStrip();
+    renderTabBar();
+    renderBlockList();
+    if (activePanel === 'styles') renderStylesPanel();
+    if (selectedBlockId && !tabManager.getActiveTab().blocks.some((b) => b.id === selectedBlockId)) closePanel();
+  }
+
+  /* ---- Project lifecycle (New / Save / Open) — same pattern as v2 ---- */
+
+  async function newProject() {
+    if (hasUnsavedChanges) {
+      const proceed = await Shell.confirm('Starting a new project will discard them.', { heading: 'Unsaved changes', okLabel: 'Discard and continue', danger: true });
+      if (!proceed) return;
+    }
+    tabManager.setState({ activeTabId: null, tabs: [defaultTab('Tab 1')], styles: defaultStyles() });
+    currentProjectName = null;
+    document.getElementById('display-project-name').textContent = 'Untitled project';
+    closePanel();
+    markSaved();
+  }
+
+  async function saveProject() {
+    let name = currentProjectName;
+    if (!name) {
+      name = await Shell.prompt('', '', { heading: 'Name this project', okLabel: 'Save' });
+      if (!name) return;
+    }
+    const pending = Shell.toast('Saving to GitHub…', 'pending');
+    try {
+      await Storage.saveProject(TOOL_ID, name, tabManager.getState());
+      currentProjectName = name;
+      document.getElementById('display-project-name').textContent = name;
+      pending.remove();
+      Shell.toast(`Project "${name}" saved!`, 'success');
+      Shell.setStatus('Connected', '');
+      markSaved();
+    } catch (error) {
+      pending.remove();
+      Shell.toast(`Save failed: ${error.message}`, 'danger');
+      Shell.setStatus('Error', 'error');
+    }
+  }
+
+  async function refreshProjectList() {
+    const pending = Shell.toast('Fetching projects…', 'pending');
+    try {
+      const { projects } = await Storage.listProjects(TOOL_ID);
+      pending.remove();
+      Shell.renderProjectList(
+        document.getElementById('project-list'), projects,
+        (name) => loadProject(name),
+        {
+          onRename: (oldName, newName) => renameProjectFlow(oldName, newName),
+          onDelete: (name) => deleteProjectFlow(name),
+        },
+      );
+    } catch (error) {
+      pending.remove();
+      Shell.toast(`Fetch failed: ${error.message}`, 'danger');
+    }
+  }
+
+  async function loadProject(name) {
+    Shell.closeModal('open-modal');
+    const pending = Shell.toast(`Loading "${name}"...`, 'pending');
+    try {
+      const { content } = await Storage.loadProject(TOOL_ID, name);
+      tabManager.setState(content);
+      currentProjectName = name;
+      document.getElementById('display-project-name').textContent = name;
+      closePanel();
+      markSaved();
+      pending.remove();
+      Shell.toast(`Project "${name}" loaded!`, 'success');
+    } catch (error) {
+      pending.remove();
+      Shell.toast(`Load failed: ${error.message}`, 'danger');
+    }
+  }
+
+  async function renameProjectFlow(oldName, newName) {
+    const pending = Shell.toast(`Renaming "${oldName}"…`, 'pending');
+    try {
+      await Storage.renameProject(TOOL_ID, oldName, newName);
+      if (currentProjectName === oldName) {
+        currentProjectName = newName;
+        document.getElementById('display-project-name').textContent = newName;
+      }
+      pending.remove();
+      Shell.toast(`Renamed to "${newName}"`, 'success');
+      refreshProjectList();
+    } catch (error) {
+      pending.remove();
+      Shell.toast(`Rename failed: ${error.message}`, 'danger');
+    }
+  }
+
+  async function deleteProjectFlow(name) {
+    const ok = await Shell.confirm(`Delete "${name}"? This can't be undone.`, { heading: 'Delete project', okLabel: 'Delete', danger: true });
+    if (!ok) return;
+    const pending = Shell.toast(`Deleting "${name}"…`, 'pending');
+    try {
+      await Storage.deleteProject(TOOL_ID, name);
+      pending.remove();
+      Shell.toast(`Deleted "${name}"`, 'success');
+      refreshProjectList();
+    } catch (error) {
+      pending.remove();
+      Shell.toast(`Delete failed: ${error.message}`, 'danger');
+    }
+  }
+
+  /* ---- Export ----
+     Reuses tab-types.js / block-renderer.js / tab-nav.js VERBATIM inside
+     the exported file — same engine that just rendered the authoring
+     preview renders the exported player, so there's no second copy of
+     any of this logic to drift out of sync. Local/repo-source preview
+     fetches the sibling files directly (a real web server can do this);
+     the Apps-Script-deployed copy embeds them as MODULE_SOURCES string
+     constants instead, since Apps Script has no fetchable sibling-file
+     paths — see CLAUDE.md's deployment pipeline section, substitution 2. */
+
+  // Apps-Script-deployed copy: no fetchable sibling-file paths exist here
+  // (unlike a real web server, which the repo-source version's fetch()
+  // path relies on for local preview) — so the three modules Export
+  // embeds are baked in as string constants instead. See CLAUDE.md's
+  // deployment pipeline section, substitution 2.
+  const MODULE_SOURCES = {
+    tabTypes: "/* ==========================================================================\n   Tabbed Panels — Block Type Schema\n   Same idea as Animated Slides v2's ELEMENT_TYPES: one declaration per\n   block type, field lists drive the property panel and \"add block\" menu\n   instead of hand-written per-type UI. block-renderer.js reads these same\n   field names when drawing/updating a block's DOM node.\n\n   Every block also has `id` and `type`, handled by the engine directly.\n   Only what's specific to a type goes in its `fields`.\n\n   Field type `richtext` is NOT a native input — see richtext-editor.js for\n   the hand-rolled contenteditable + mark-toggling implementation. Its\n   value is always a sanitized HTML string restricted to the tags implied\n   by `inline` (b/i/u/a).\n\n   Field type `table` is also not a native input — its value is a 2D array\n   of plain-text cell strings, `data.rows`; see index.html's property-panel\n   table-grid editor (add/remove row/column) for the only place that reads\n   `field.type === 'table'` specially. Cells are plain text, not richtext —\n   a deliberate scope decision, kept simple for a dense grid.\n\n   `heading`'s `level` (h2/h3/h4) and `subtitle` text, `badge`'s `style`,\n   `button`'s `style`, and `table`'s `style` all read their actual\n   size/colour from the project-wide STYLES object (see tab-manager.js's\n   defaultStyles()) rather than storing it per-block — the same \"instance\n   picks a variant, a project-level settings panel defines what that\n   variant looks like\" split v2 uses for nav Active/Inactive colours.\n\n   Deliberate scope boundaries (see HANDOFF.md if reconsidering these):\n   - No nested blocks — `list.items` is a flat array of richtext strings,\n     not sub-blocks.\n   - `heading` has no inline marks on its main text (plain text only) — a\n     bold-in-the-middle heading was judged not worth the complexity. Its\n     `subtitle` field is a second, separately-styled plain-text line\n     (settled as a field on Heading rather than its own block type).\n   - Inline links (via richtext's `link` mark) and the standalone `button`\n     block are deliberately two different things, not one collapsed onto\n     the other — a link embedded mid-sentence and a standalone CTA read\n     differently to a learner.\n   - `table` cells are plain text, not richtext.\n   ========================================================================== */\n\nconst BLOCK_TYPES = {\n\n  heading: {\n    label: 'Heading',\n    icon: 'fa-heading',\n    fields: {\n      level:    { type: 'select', label: 'Size',     default: 'h2', options: [['h2', 'H2 (large)'], ['h3', 'H3 (medium)'], ['h4', 'H4 (small)']] },\n      text:     { type: 'text',   label: 'Text',      default: 'Heading' },\n      subtitle: { type: 'text',   label: 'Subtitle (optional)', default: '' },\n    },\n  },\n\n  paragraph: {\n    label: 'Text',\n    icon: 'fa-align-left',\n    fields: {\n      content: { type: 'richtext', label: 'Text',  default: '', inline: ['bold', 'italic', 'underline', 'link'] },\n      align:   { type: 'select',   label: 'Align',  default: 'left', options: [['left', 'Left'], ['center', 'Center'], ['right', 'Right'], ['justify', 'Justify']] },\n    },\n  },\n\n  list: {\n    label: 'List',\n    icon: 'fa-list-ul',\n    fields: {\n      style: { type: 'select', label: 'Style', default: 'bullet', options: [['bullet', 'Bulleted'], ['numbered', 'Numbered']] },\n      items: { type: 'array',  label: 'Items',  default: [''], of: { type: 'richtext', inline: ['bold', 'italic', 'link'] } },\n    },\n  },\n\n  button: {\n    label: 'Button',\n    icon: 'fa-link',\n    fields: {\n      label:  { type: 'text',    label: 'Label',        default: 'Learn more' },\n      url:    { type: 'url',     label: 'Link URL',      default: '' },\n      newTab: { type: 'boolean', label: 'Open in new tab', default: true },\n      style:  { type: 'select',  label: 'Style',         default: 'primary', options: [['primary', 'Primary'], ['secondary', 'Secondary']] },\n    },\n  },\n\n  badge: {\n    label: 'Badge',\n    icon: 'fa-certificate',\n    fields: {\n      label: { type: 'text',   label: 'Label', default: 'New' },\n      style: { type: 'select', label: 'Style', default: 'primary', options: [['primary', 'Primary'], ['secondary', 'Secondary']] },\n    },\n  },\n\n  table: {\n    label: 'Table',\n    icon: 'fa-table',\n    fields: {\n      style:        { type: 'select',  label: 'Style', default: 'bordered', options: [['bordered', 'Bordered'], ['plain', 'Plain']] },\n      hasHeaderRow: { type: 'boolean', label: 'First row is a header', default: true },\n      rows: {\n        type: 'table', label: 'Cells',\n        default: [['Header 1', 'Header 2'], ['Cell 1', 'Cell 2']],\n      },\n    },\n  },\n\n  separator: {\n    label: 'Separator',\n    icon: 'fa-minus',\n    fields: {},\n  },\n\n};\n\n/**\n * Builds a fresh block's data object from its schema defaults — this is\n * what \"add block\" calls. Keeps default-value logic in one place instead\n * of repeated inline object literals scattered through the editor.\n */\nfunction makeDefaultBlock(type, id) {\n  const schema = BLOCK_TYPES[type];\n  if (!schema) throw new Error(`Unknown block type: ${type}`);\n\n  const data = { id, type };\n  Object.entries(schema.fields).forEach(([key, field]) => {\n    // Deep-clone array/object defaults (JSON round-trip is enough here —\n    // every field default is plain JSON-serializable data) so each block\n    // gets its own copy rather than a shared reference to the schema's\n    // default value. A shallow [...spread] isn't enough for `table.rows`,\n    // which is an array of arrays.\n    data[key] = (typeof field.default === 'object' && field.default !== null)\n      ? JSON.parse(JSON.stringify(field.default))\n      : field.default;\n  });\n  return data;\n}\n",
+    blockRenderer: "/* ==========================================================================\n   Tabbed Panels — Block Renderer\n   Same role as Animated Slides v2's element-renderer.js: the one rendering\n   path, used unmodified by both the authoring content area and the\n   exported player. Never make this authoring-aware — it only reads plain\n   block `data` objects (plus the project-wide `styles` object) and\n   returns real DOM, no concept of selection or editing.\n\n   `styles` (see tab-manager.js's defaultStyles()) supplies the actual\n   size/colour for whichever variant a block picked (heading level,\n   badge/button primary-or-secondary) — passed in as a parameter rather\n   than imported globally so this stays a pure function of its inputs,\n   the same reasoning v2's nav-bar.js takes its style object as a\n   parameter instead of reaching for a global.\n\n   Rich text fields (`content`, list `items`) are stored as sanitized HTML\n   strings (see richtext-editor.js for how they're produced) and rendered\n   via innerHTML — trusted the same way an author-supplied value already is\n   everywhere else in this suite. Table cells are plain text (see\n   tab-types.js) and rendered via textContent.\n   ========================================================================== */\n\nfunction renderBlock(data, styles) {\n  const schema = BLOCK_TYPES[data.type];\n  if (!schema) throw new Error(`Unknown block type: ${data.type}`);\n\n  const el = document.createElement('div');\n  el.className = 'tp-block tp-block-' + data.type;\n  el.dataset.blockId = data.id;\n\n  switch (data.type) {\n    case 'heading': {\n      const level = styles[data.level] || styles.h2;\n      const tag = data.level === 'h4' ? 'h4' : data.level === 'h3' ? 'h3' : 'h2';\n      const h = document.createElement(tag);\n      h.className = 'tp-heading';\n      h.textContent = data.text || '';\n      h.style.fontSize = level.size + 'px';\n      h.style.color = level.color;\n      el.appendChild(h);\n      if (data.subtitle) {\n        const sub = document.createElement('div');\n        sub.className = 'tp-subtitle';\n        sub.textContent = data.subtitle;\n        sub.style.fontSize = styles.subtitle.size + 'px';\n        sub.style.color = styles.subtitle.color;\n        el.appendChild(sub);\n      }\n      break;\n    }\n    case 'paragraph': {\n      const p = document.createElement('div');\n      p.className = 'tp-paragraph';\n      p.innerHTML = data.content || '';\n      p.style.textAlign = data.align || 'left';\n      el.appendChild(p);\n      break;\n    }\n    case 'list': {\n      const listEl = document.createElement(data.style === 'numbered' ? 'ol' : 'ul');\n      listEl.className = 'tp-list';\n      (data.items || []).forEach((item) => {\n        const li = document.createElement('li');\n        li.innerHTML = item || '';\n        listEl.appendChild(li);\n      });\n      el.appendChild(listEl);\n      break;\n    }\n    case 'button': {\n      const variant = styles.button[data.style] || styles.button.primary;\n      const a = document.createElement('a');\n      a.className = 'tp-button';\n      a.textContent = data.label || '';\n      a.href = data.url || '#';\n      if (data.newTab) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }\n      a.style.background = variant.bg;\n      a.style.color = variant.text;\n      a.style.borderColor = variant.border;\n      el.appendChild(a);\n      break;\n    }\n    case 'badge': {\n      const variant = styles.badge[data.style] || styles.badge.primary;\n      const span = document.createElement('span');\n      span.className = 'tp-badge';\n      span.textContent = data.label || '';\n      span.style.background = variant.bg;\n      span.style.color = variant.text;\n      span.style.borderColor = variant.border;\n      el.appendChild(span);\n      break;\n    }\n    case 'table': {\n      const variant = styles.table[data.style] || styles.table.bordered;\n      const table = document.createElement('table');\n      table.className = 'tp-table';\n      const rows = data.rows || [];\n      rows.forEach((row, r) => {\n        const tr = document.createElement('tr');\n        const isHeaderRow = data.hasHeaderRow && r === 0;\n        row.forEach((cellText) => {\n          const cell = document.createElement(isHeaderRow ? 'th' : 'td');\n          cell.textContent = cellText || '';\n          cell.style.borderColor = variant.border;\n          if (isHeaderRow) { cell.style.background = variant.bg; cell.style.color = variant.text; }\n          tr.appendChild(cell);\n        });\n        table.appendChild(tr);\n      });\n      el.appendChild(table);\n      break;\n    }\n    case 'separator': {\n      el.appendChild(document.createElement('hr'));\n      break;\n    }\n  }\n\n  return el;\n}\n\n/** Renders a tab's full block list into a container, replacing whatever\n *  was there. Simple full-rebuild rather than incremental diffing —\n *  there's no animation or drag state riding on individual block DOM\n *  nodes surviving a re-render (unlike v2's element nodes), so this stays\n *  cheap and correct rather than needing SlideManager-style careful\n *  in-place patching. */\nfunction renderTabContent(tab, container, styles) {\n  container.innerHTML = '';\n  tab.blocks.forEach((data) => container.appendChild(renderBlock(data, styles)));\n}\n",
+    tabNav: "/* ==========================================================================\n   Tabbed Panels — Tab Navigation\n   The learner-facing tab strip: an underline under the active tab, and\n   left/right chevrons to scroll the strip when tabs overflow its width.\n   Same role as Animated Slides v2's nav-bar.js — one rendering + click-\n   handling path, used UNMODIFIED by both the authoring canvas and the\n   exported player, so the canvas is genuinely WYSIWYG rather than an\n   editor-only approximation of what learners will see.\n\n   Authoring-only concerns (add/rename/delete/reorder/duplicate tabs) live\n   entirely outside this file, in index.html's bottom tab bar — this\n   module only ever renders tabs + reports which one was clicked.\n   ========================================================================== */\n\n/**\n * @param container      element to render into (its children are replaced).\n * @param tabs           [{ id, title }, ...] — extra keys (e.g. `blocks`) are ignored.\n * @param activeTabId\n * @param onSelect       called with a tab's id when clicked.\n * @param tabLabelStyle  optional { fontSize, paddingX, paddingY } — see\n *                       tab-manager.js's defaultStyles().tabLabel. Falls\n *                       back to the CSS defaults when omitted.\n */\nfunction renderTabNav(container, { tabs, activeTabId, onSelect, tabLabelStyle }) {\n  container.innerHTML = '';\n  container.className = 'tp-tabnav';\n\n  const prevBtn = document.createElement('button');\n  prevBtn.type = 'button';\n  prevBtn.className = 'tp-tabnav-chevron';\n  prevBtn.setAttribute('aria-label', 'Scroll tabs left');\n  prevBtn.innerHTML = '<i class=\"fa-solid fa-chevron-left\"></i>';\n\n  const strip = document.createElement('div');\n  strip.className = 'tp-tabnav-strip';\n\n  const nextBtn = document.createElement('button');\n  nextBtn.type = 'button';\n  nextBtn.className = 'tp-tabnav-chevron';\n  nextBtn.setAttribute('aria-label', 'Scroll tabs right');\n  nextBtn.innerHTML = '<i class=\"fa-solid fa-chevron-right\"></i>';\n\n  tabs.forEach((tab) => {\n    const btn = document.createElement('button');\n    btn.type = 'button';\n    btn.className = 'tp-tabnav-tab' + (tab.id === activeTabId ? ' active' : '');\n    btn.textContent = tab.title;\n    if (tabLabelStyle) {\n      btn.style.fontSize = tabLabelStyle.fontSize + 'px';\n      btn.style.padding = `${tabLabelStyle.paddingY}px ${tabLabelStyle.paddingX}px`;\n    }\n    btn.addEventListener('click', () => onSelect(tab.id));\n    strip.appendChild(btn);\n  });\n\n  function updateChevrons() {\n    prevBtn.disabled = strip.scrollLeft <= 0;\n    nextBtn.disabled = strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 1;\n  }\n  prevBtn.addEventListener('click', () => strip.scrollBy({ left: -strip.clientWidth * 0.8, behavior: 'smooth' }));\n  nextBtn.addEventListener('click', () => strip.scrollBy({ left: strip.clientWidth * 0.8, behavior: 'smooth' }));\n  strip.addEventListener('scroll', updateChevrons);\n\n  container.appendChild(prevBtn);\n  container.appendChild(strip);\n  container.appendChild(nextBtn);\n\n  // Layout isn't final until after this returns and the browser paints —\n  // defer the initial enabled/disabled check one frame so scrollWidth is\n  // accurate instead of always reading as \"no overflow yet\".\n  requestAnimationFrame(updateChevrons);\n}\n"
+  };
+
+  function openExportModal() {
+    const modules = Object.values(MODULE_SOURCES).join('\n\n');
+    const state = tabManager.getState();
+    const tabsJSON = JSON.stringify(state.tabs);
+    const stylesJSON = JSON.stringify(state.styles);
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>${currentProjectName || 'Tabbed Panels'}</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: #F1F0EB; }
+  #player-card { max-width: 860px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 12px rgba(28,35,33,0.08); overflow: hidden; }
+  .tp-tabnav { display: flex; align-items: stretch; background: #FAFAF8; border-bottom: 1px solid #E3E1DA; }
+  .tp-tabnav-chevron { flex-shrink: 0; width: 40px; border: none; background: transparent; color: #8A9291; cursor: pointer; font-size: 13px; }
+  .tp-tabnav-chevron:hover:not(:disabled) { color: #0C5E82; }
+  .tp-tabnav-chevron:disabled { opacity: 0.3; cursor: default; }
+  .tp-tabnav-strip { flex: 1; display: flex; overflow-x: auto; scrollbar-width: none; }
+  .tp-tabnav-strip::-webkit-scrollbar { display: none; }
+  .tp-tabnav-tab { flex-shrink: 0; padding: 16px 24px 12px; border: none; background: transparent; cursor: pointer; font-family: inherit; font-size: 0.9375rem; color: #4A5453; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tp-tabnav-tab.active { color: #0C5E82; border-bottom-color: #0C5E82; font-weight: 600; }
+  #player-body { padding: 32px; }
+  #block-list { display: flex; flex-direction: column; gap: 12px; }
+  .tp-heading { margin: 0; }
+  .tp-subtitle { margin: 4px 0 0; }
+  .tp-paragraph { line-height: 1.5; }
+  .tp-list { margin: 0; padding-left: 1.4em; line-height: 1.5; }
+  .tp-button { display: inline-block; padding: 10px 20px; border-radius: 6px; border: 1px solid transparent; text-decoration: none; font-weight: 600; font-size: 0.8125rem; }
+  .tp-badge { display: inline-block; padding: 3px 12px; border-radius: 999px; border: 1px solid transparent; font-size: 0.75rem; font-weight: 600; }
+  .tp-table { border-collapse: collapse; width: 100%; font-size: 0.8125rem; }
+  .tp-table th, .tp-table td { border: 1px solid #CBC8BE; padding: 8px 10px; text-align: left; }
+  .tp-table th { background: #FAFAF8; font-weight: 600; }
+  .tp-block-separator hr { border: none; border-top: 1px solid #E3E1DA; margin: 8px 0; }
+</style>
+</head>
+<body>
+<div id="player-card">
+  <div id="tabnav-host"></div>
+  <div id="player-body"><div id="block-list"></div></div>
+</div>
+<script>
+${modules}
+
+const tabs = ${tabsJSON};
+const styles = ${stylesJSON};
+let activeTabId = tabs[0].id;
+
+function render() {
+  renderTabNav(document.getElementById('tabnav-host'), {
+    tabs, activeTabId,
+    onSelect: (id) => { activeTabId = id; render(); },
+    tabLabelStyle: styles.tabLabel,
+  });
+  const tab = tabs.find((t) => t.id === activeTabId);
+  const blockList = document.getElementById('block-list');
+  blockList.style.gap = styles.blockSpacing + 'px';
+  renderTabContent(tab, blockList, styles);
+}
+render();
+<\/script>
+</body>
+</html>`;
+
+    document.getElementById('export-textarea').value = html;
+    Shell.openModal('export-modal');
+  }
+
+  function copyExportCode() {
+    const textarea = document.getElementById('export-textarea');
+    textarea.select();
+    navigator.clipboard.writeText(textarea.value).then(() => {
+      Shell.toast('Code copied to clipboard', 'success');
+    }).catch(() => {
+      document.execCommand('copy');
+      Shell.toast('Code copied to clipboard', 'success');
+    });
+  }
+
+  /* ---- Boot ---- */
+  Shell.init({ toolName: 'Tabbed Panels' });
+  Shell.bindOverlayDismiss();
+  renderLeftRail();
+  renderAll();
+  history.onChange();
+</script>
+</body>
+</html>

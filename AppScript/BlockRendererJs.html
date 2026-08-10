@@ -1,0 +1,134 @@
+<script>
+/* ==========================================================================
+   Tabbed Panels — Block Renderer
+   Same role as Animated Slides v2's element-renderer.js: the one rendering
+   path, used unmodified by both the authoring content area and the
+   exported player. Never make this authoring-aware — it only reads plain
+   block `data` objects (plus the project-wide `styles` object) and
+   returns real DOM, no concept of selection or editing.
+
+   `styles` (see tab-manager.js's defaultStyles()) supplies the actual
+   size/colour for whichever variant a block picked (heading level,
+   badge/button primary-or-secondary) — passed in as a parameter rather
+   than imported globally so this stays a pure function of its inputs,
+   the same reasoning v2's nav-bar.js takes its style object as a
+   parameter instead of reaching for a global.
+
+   Rich text fields (`content`, list `items`) are stored as sanitized HTML
+   strings (see richtext-editor.js for how they're produced) and rendered
+   via innerHTML — trusted the same way an author-supplied value already is
+   everywhere else in this suite. Table cells are plain text (see
+   tab-types.js) and rendered via textContent.
+   ========================================================================== */
+
+function renderBlock(data, styles) {
+  const schema = BLOCK_TYPES[data.type];
+  if (!schema) throw new Error(`Unknown block type: ${data.type}`);
+
+  const el = document.createElement('div');
+  el.className = 'tp-block tp-block-' + data.type;
+  el.dataset.blockId = data.id;
+
+  switch (data.type) {
+    case 'heading': {
+      const level = styles[data.level] || styles.h2;
+      const tag = data.level === 'h4' ? 'h4' : data.level === 'h3' ? 'h3' : 'h2';
+      const h = document.createElement(tag);
+      h.className = 'tp-heading';
+      h.textContent = data.text || '';
+      h.style.fontSize = level.size + 'px';
+      h.style.color = level.color;
+      el.appendChild(h);
+      if (data.subtitle) {
+        const sub = document.createElement('div');
+        sub.className = 'tp-subtitle';
+        sub.textContent = data.subtitle;
+        sub.style.fontSize = styles.subtitle.size + 'px';
+        sub.style.color = styles.subtitle.color;
+        el.appendChild(sub);
+      }
+      break;
+    }
+    case 'paragraph': {
+      const p = document.createElement('div');
+      p.className = 'tp-paragraph';
+      p.innerHTML = data.content || '';
+      p.style.textAlign = data.align || 'left';
+      el.appendChild(p);
+      break;
+    }
+    case 'list': {
+      const listEl = document.createElement(data.style === 'numbered' ? 'ol' : 'ul');
+      listEl.className = 'tp-list';
+      (data.items || []).forEach((item) => {
+        const li = document.createElement('li');
+        li.innerHTML = item || '';
+        listEl.appendChild(li);
+      });
+      el.appendChild(listEl);
+      break;
+    }
+    case 'button': {
+      const variant = styles.button[data.style] || styles.button.primary;
+      const a = document.createElement('a');
+      a.className = 'tp-button';
+      a.textContent = data.label || '';
+      a.href = data.url || '#';
+      if (data.newTab) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+      a.style.background = variant.bg;
+      a.style.color = variant.text;
+      a.style.borderColor = variant.border;
+      el.appendChild(a);
+      break;
+    }
+    case 'badge': {
+      const variant = styles.badge[data.style] || styles.badge.primary;
+      const span = document.createElement('span');
+      span.className = 'tp-badge';
+      span.textContent = data.label || '';
+      span.style.background = variant.bg;
+      span.style.color = variant.text;
+      span.style.borderColor = variant.border;
+      el.appendChild(span);
+      break;
+    }
+    case 'table': {
+      const variant = styles.table[data.style] || styles.table.bordered;
+      const table = document.createElement('table');
+      table.className = 'tp-table';
+      const rows = data.rows || [];
+      rows.forEach((row, r) => {
+        const tr = document.createElement('tr');
+        const isHeaderRow = data.hasHeaderRow && r === 0;
+        row.forEach((cellText) => {
+          const cell = document.createElement(isHeaderRow ? 'th' : 'td');
+          cell.textContent = cellText || '';
+          cell.style.borderColor = variant.border;
+          if (isHeaderRow) { cell.style.background = variant.bg; cell.style.color = variant.text; }
+          tr.appendChild(cell);
+        });
+        table.appendChild(tr);
+      });
+      el.appendChild(table);
+      break;
+    }
+    case 'separator': {
+      el.appendChild(document.createElement('hr'));
+      break;
+    }
+  }
+
+  return el;
+}
+
+/** Renders a tab's full block list into a container, replacing whatever
+ *  was there. Simple full-rebuild rather than incremental diffing —
+ *  there's no animation or drag state riding on individual block DOM
+ *  nodes surviving a re-render (unlike v2's element nodes), so this stays
+ *  cheap and correct rather than needing SlideManager-style careful
+ *  in-place patching. */
+function renderTabContent(tab, container, styles) {
+  container.innerHTML = '';
+  tab.blocks.forEach((data) => container.appendChild(renderBlock(data, styles)));
+}
+</script>

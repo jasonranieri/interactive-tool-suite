@@ -1,0 +1,72 @@
+/* ==========================================================================
+   Tabbed Panels — Tab Navigation
+   The learner-facing tab strip: an underline under the active tab, and
+   left/right chevrons to scroll the strip when tabs overflow its width.
+   Same role as Animated Slides v2's nav-bar.js — one rendering + click-
+   handling path, used UNMODIFIED by both the authoring canvas and the
+   exported player, so the canvas is genuinely WYSIWYG rather than an
+   editor-only approximation of what learners will see.
+
+   Authoring-only concerns (add/rename/delete/reorder/duplicate tabs) live
+   entirely outside this file, in index.html's bottom tab bar — this
+   module only ever renders tabs + reports which one was clicked.
+   ========================================================================== */
+
+/**
+ * @param container      element to render into (its children are replaced).
+ * @param tabs           [{ id, title }, ...] — extra keys (e.g. `blocks`) are ignored.
+ * @param activeTabId
+ * @param onSelect       called with a tab's id when clicked.
+ * @param tabLabelStyle  optional { fontSize, paddingX, paddingY } — see
+ *                       tab-manager.js's defaultStyles().tabLabel. Falls
+ *                       back to the CSS defaults when omitted.
+ */
+function renderTabNav(container, { tabs, activeTabId, onSelect, tabLabelStyle }) {
+  container.innerHTML = '';
+  container.className = 'tp-tabnav';
+
+  const prevBtn = document.createElement('button');
+  prevBtn.type = 'button';
+  prevBtn.className = 'tp-tabnav-chevron';
+  prevBtn.setAttribute('aria-label', 'Scroll tabs left');
+  prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+
+  const strip = document.createElement('div');
+  strip.className = 'tp-tabnav-strip';
+
+  const nextBtn = document.createElement('button');
+  nextBtn.type = 'button';
+  nextBtn.className = 'tp-tabnav-chevron';
+  nextBtn.setAttribute('aria-label', 'Scroll tabs right');
+  nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+
+  tabs.forEach((tab) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tp-tabnav-tab' + (tab.id === activeTabId ? ' active' : '');
+    btn.textContent = tab.title;
+    if (tabLabelStyle) {
+      btn.style.fontSize = tabLabelStyle.fontSize + 'px';
+      btn.style.padding = `${tabLabelStyle.paddingY}px ${tabLabelStyle.paddingX}px`;
+    }
+    btn.addEventListener('click', () => onSelect(tab.id));
+    strip.appendChild(btn);
+  });
+
+  function updateChevrons() {
+    prevBtn.disabled = strip.scrollLeft <= 0;
+    nextBtn.disabled = strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 1;
+  }
+  prevBtn.addEventListener('click', () => strip.scrollBy({ left: -strip.clientWidth * 0.8, behavior: 'smooth' }));
+  nextBtn.addEventListener('click', () => strip.scrollBy({ left: strip.clientWidth * 0.8, behavior: 'smooth' }));
+  strip.addEventListener('scroll', updateChevrons);
+
+  container.appendChild(prevBtn);
+  container.appendChild(strip);
+  container.appendChild(nextBtn);
+
+  // Layout isn't final until after this returns and the browser paints —
+  // defer the initial enabled/disabled check one frame so scrollWidth is
+  // accurate instead of always reading as "no overflow yet".
+  requestAnimationFrame(updateChevrons);
+}

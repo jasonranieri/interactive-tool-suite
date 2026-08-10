@@ -32,6 +32,11 @@ const PAGES = {
     description: 'Rebuilt engine — undo/redo, layers, and a redesigned nav bar. In testing.',
     status: 'beta',
   },
+  'tabbed-panels': {
+    file: 'TabbedPanels', title: 'Tabbed Panels',
+    description: 'Build tabbed content with headings, text, lists, and linking buttons.',
+    status: 'in development',
+  },
   // 'tabbed-container': { file: 'TabbedContainer', title: 'Tabbed Container', description: '...', status: 'stable' },  <- add once migrated
   // 'worked-example': { file: 'WorkedExample', title: 'Worked Example', description: '...', status: 'stable' },        <- add once migrated
 };
