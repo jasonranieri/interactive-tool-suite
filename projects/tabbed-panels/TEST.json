@@ -1,0 +1,118 @@
+{
+  "styles": {
+    "badge": {
+      "primary": {
+        "text": "#1e2366",
+        "border": "#406bb0",
+        "bg": "#99b9ff"
+      },
+      "secondary": {
+        "border": "#d1d5db",
+        "text": "#374151",
+        "bg": "#f3f4f6"
+      }
+    },
+    "h3": {
+      "color": "#111827",
+      "size": 22
+    },
+    "tabLabel": {
+      "paddingY": 16,
+      "fontSize": 15,
+      "paddingX": 24
+    },
+    "subtitle": {
+      "color": "#6b7280",
+      "size": 16
+    },
+    "blockSpacing": 12,
+    "h4": {
+      "color": "#111827",
+      "size": 18
+    },
+    "button": {
+      "secondary": {
+        "bg": "#ffffff",
+        "text": "#111827",
+        "border": "#d1d5db"
+      },
+      "primary": {
+        "border": "#2563eb",
+        "text": "#ffffff",
+        "bg": "#2563eb"
+      }
+    },
+    "table": {
+      "plain": {
+        "bg": "#ffffff",
+        "border": "#ffffff",
+        "text": "#111827"
+      },
+      "bordered": {
+        "text": "#111827",
+        "border": "#cbc8be",
+        "bg": "#fafaf8"
+      }
+    },
+    "h2": {
+      "color": "#111827",
+      "size": 28
+    }
+  },
+  "tabs": [
+    {
+      "id": "tab-1786336162053-gu1ll",
+      "blocks": [
+        {
+          "style": "bullet",
+          "type": "list",
+          "id": "block-1786336163825-kgjqv",
+          "items": [
+            ""
+          ]
+        },
+        {
+          "content": "",
+          "id": "block-1786336164046-nu3be",
+          "type": "paragraph",
+          "align": "left"
+        },
+        {
+          "level": "h2",
+          "subtitle": "",
+          "text": "Heading",
+          "id": "block-1786336164296-c2qk9",
+          "type": "heading"
+        }
+      ],
+      "title": "Tab 1"
+    },
+    {
+      "blocks": [
+        {
+          "style": "primary",
+          "label": "New",
+          "id": "block-1786336198039-ivdcy",
+          "type": "badge"
+        },
+        {
+          "id": "block-1786336198268-9qlw5",
+          "url": "",
+          "style": "primary",
+          "newTab": true,
+          "type": "button",
+          "label": "Learn more"
+        },
+        {
+          "align": "left",
+          "id": "block-1786336198496-c7743",
+          "type": "paragraph",
+          "content": ""
+        }
+      ],
+      "title": "Tab 2",
+      "id": "tab-1786336192602-v4r1w"
+    }
+  ],
+  "activeTabId": "tab-1786336192602-v4r1w"
+}
