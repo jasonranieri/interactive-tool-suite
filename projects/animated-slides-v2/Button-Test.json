@@ -1,27 +1,27 @@
 {
-  "activeIndex": 3,
   "canvasSettings": {
-    "backgroundColor": "#ee5353",
+    "height": 500,
     "width": 1920,
     "nav": {
-      "buttonPaddingX": 30,
+      "buttonTextColor": "#ffffff",
+      "buttonFontSize": 20,
       "buttonRadius": 20,
       "buttonInactiveColor": "#ffffff",
-      "navAlignment": "left",
-      "buttonInactiveBottomColor": "#00b7ff",
       "navGap": 30,
-      "buttonPaddingY": 20,
-      "buttonTextColor": "#ffffff",
-      "buttonBottomColor": "#ff0040",
+      "navAlignment": "left",
       "buttonColor": "#000000",
-      "navPosition": "bottom",
+      "buttonBottomColor": "#ff0040",
       "buttonInactiveTextColor": "#00a2ff",
-      "buttonFontSize": 20
+      "buttonInactiveBottomColor": "#00b7ff",
+      "buttonPaddingY": 20,
+      "navPosition": "bottom",
+      "buttonPaddingX": 30
     },
-    "gridSize": 20,
     "snapToGrid": true,
-    "height": 500
+    "backgroundColor": "#ee5353",
+    "gridSize": 20
   },
+  "activeIndex": 3,
   "slides": [
     {
       "name": "Slide 1",
@@ -29,65 +29,65 @@
       "elements": []
     },
     {
-      "elements": [],
       "id": "slide-1785912788701",
+      "elements": [],
       "name": "Slide 2"
     },
     {
-      "name": "Slide 5",
       "id": "slide-1785912994912",
-      "elements": []
+      "elements": [],
+      "name": "Slide 5"
     },
     {
       "id": "slide-1785912995296",
-      "name": "Slide 6",
       "elements": [
         {
-          "y": 150,
-          "iconName": "star",
-          "height": 80,
-          "name": "Icon",
-          "id": "el-1785913138381",
-          "opacity": 1,
           "x": 200,
-          "width": 80,
           "color": "#1f2937",
-          "type": "icon"
+          "name": "Icon",
+          "width": 80,
+          "height": 80,
+          "iconName": "star",
+          "type": "icon",
+          "id": "el-1785913138381",
+          "y": 150,
+          "opacity": 1
         }
-      ]
+      ],
+      "name": "Slide 6"
     },
     {
-      "name": "Slide 7",
       "id": "slide-1785912995512",
-      "elements": []
+      "elements": [],
+      "name": "Slide 7"
     },
     {
       "name": "Slide 8",
-      "id": "slide-1785912995737",
-      "elements": []
+      "elements": [],
+      "id": "slide-1785912995737"
     },
     {
-      "id": "slide-1785912788909",
-      "name": "Slide 3",
       "elements": [
         {
-          "color": "#ffffff",
-          "type": "icon",
-          "name": "Icon",
-          "id": "el-1785912921115",
-          "opacity": 1,
-          "x": 1740,
-          "width": 80,
-          "y": 40,
           "iconName": "star",
-          "height": 80
+          "height": 80,
+          "width": 80,
+          "name": "Icon",
+          "x": 1740,
+          "color": "#ffffff",
+          "opacity": 1,
+          "type": "icon",
+          "y": 40,
+          "id": "el-1785912921115"
         }
-      ]
+      ],
+      "id": "slide-1785912788909",
+      "name": "Slide 3"
     },
     {
+      "elements": [],
       "id": "slide-1785912789084",
-      "name": "FOURTH SLIDE",
-      "elements": []
+      "name": "FOURTH SLIDE"
     }
   ]
 }
