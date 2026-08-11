@@ -1,0 +1,92 @@
+{
+  "elements": [
+    {
+      "color": "#1f2937",
+      "x": 200,
+      "strokeWidth": 8,
+      "angle": 180,
+      "type": "arrow",
+      "name": "Arrow",
+      "opacity": 1,
+      "length": 200,
+      "width": 8,
+      "id": "el-1786419783099",
+      "height": 200,
+      "y": 150
+    },
+    {
+      "width": 300,
+      "name": "Shape",
+      "x": 224,
+      "radiusBL": 0,
+      "y": 174,
+      "radiusBR": 0,
+      "radiusTR": 0,
+      "id": "el-1786419783481",
+      "height": 200,
+      "fill": "#e1f6db",
+      "opacity": 1,
+      "type": "rect",
+      "radiusTL": 0
+    },
+    {
+      "name": "Text",
+      "align": "center",
+      "padding": 10,
+      "x": 248,
+      "width": 400,
+      "lineHeight": 1.3,
+      "fontSize": 52,
+      "opacity": 1,
+      "type": "text",
+      "color": "#1f2937",
+      "content": "New text",
+      "fontWeight": "700",
+      "y": 198,
+      "height": 120,
+      "id": "el-1786419783710"
+    }
+  ],
+  "buttons": [
+    {
+      "defaultOn": false,
+      "id": "btn-1786419780543-a",
+      "label": "A",
+      "elementIds": []
+    },
+    {
+      "label": "B",
+      "elementIds": [],
+      "id": "btn-1786419780543-b",
+      "defaultOn": false
+    },
+    {
+      "defaultOn": false,
+      "label": "C",
+      "elementIds": [],
+      "id": "btn-1786419780543-c"
+    }
+  ],
+  "canvasSettings": {
+    "backgroundColor": "#ffffff",
+    "snapToGrid": false,
+    "height": 1080,
+    "width": 1920,
+    "nav": {
+      "buttonInactiveTextColor": "#073048",
+      "navGap": 12,
+      "buttonFontWeight": "700",
+      "buttonPaddingY": 8,
+      "buttonRadius": 8,
+      "navPosition": "bottom",
+      "buttonInactiveBottomColor": "#B8D4DF",
+      "buttonBottomColor": "#094A68",
+      "buttonPaddingX": 20,
+      "buttonInactiveColor": "#DCEBF2",
+      "buttonFontSize": 14,
+      "buttonColor": "#0C5E82",
+      "buttonTextColor": "#ffffff"
+    },
+    "gridSize": 20
+  }
+}
