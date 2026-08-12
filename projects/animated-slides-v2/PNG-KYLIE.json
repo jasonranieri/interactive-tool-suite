@@ -1,0 +1,255 @@
+{
+  "activeIndex": 4,
+  "canvasSettings": {
+    "width": 1920,
+    "nav": {
+      "buttonTextColor": "#ffffff",
+      "buttonPaddingY": 21,
+      "buttonInactiveBottomColor": "#B8D4DF",
+      "buttonPaddingX": 28,
+      "buttonInactiveTextColor": "#073048",
+      "buttonBottomColor": "#094A68",
+      "buttonRadius": 8,
+      "buttonFontSize": 26,
+      "buttonFontWeight": "700",
+      "navGap": 12,
+      "navPosition": "bottom",
+      "buttonInactiveColor": "#DCEBF2",
+      "buttonColor": "#0C5E82"
+    },
+    "height": 1080,
+    "gridSize": 20,
+    "backgroundColor": "#ffffff",
+    "snapToGrid": false
+  },
+  "slides": [
+    {
+      "elements": [
+        {
+          "name": "Text",
+          "fontFamily": "sans",
+          "id": "el-1786509720322",
+          "type": "text",
+          "opacity": 1,
+          "lineHeight": 1.3,
+          "color": "#1f2937",
+          "y": 335,
+          "padding": 10,
+          "fontWeight": "700",
+          "fontSize": 80,
+          "align": "left",
+          "content": "The curious kitten played with a soft, colourful ball.",
+          "width": 1759,
+          "height": 228,
+          "x": 62
+        }
+      ],
+      "name": "Simple",
+      "id": "slide-1786509665317"
+    },
+    {
+      "name": "Compound",
+      "id": "slide-1786513637491",
+      "elements": [
+        {
+          "color": "#1f2937",
+          "type": "text",
+          "fontFamily": "sans",
+          "opacity": 1,
+          "height": 332,
+          "name": "Text",
+          "lineHeight": 1.3,
+          "width": 1759,
+          "x": 62,
+          "fontSize": 80,
+          "align": "left",
+          "padding": 10,
+          "content": "The curious kitten played with a soft, colourful ball, and it enjoyed the game immensely.",
+          "fontWeight": "700",
+          "id": "el-1786509720322",
+          "y": 335
+        }
+      ]
+    },
+    {
+      "elements": [
+        {
+          "fontWeight": "700",
+          "name": "Text",
+          "opacity": 1,
+          "type": "text",
+          "color": "#1f2937",
+          "id": "el-1786509720322",
+          "lineHeight": 1.3,
+          "y": 335,
+          "content": "Although it was completely unaware of its surroundings, the curious kitten played with a soft, colourful ball.",
+          "height": 332,
+          "align": "left",
+          "padding": 10,
+          "fontFamily": "sans",
+          "fontSize": 80,
+          "width": 1759,
+          "x": 62
+        }
+      ],
+      "id": "slide-1786513684633",
+      "name": "Complex"
+    },
+    {
+      "id": "slide-1786513584657",
+      "elements": [
+        {
+          "x": 62,
+          "padding": 10,
+          "fontWeight": "700",
+          "width": 1759,
+          "id": "el-1786509720322",
+          "content": "Although it was completely unaware of its surroundings, the curious kitten played with a soft, colourful ball, and it seemed to enjoy the game immensely. ",
+          "y": 335,
+          "align": "left",
+          "type": "text",
+          "height": 436,
+          "lineHeight": 1.3,
+          "name": "Text",
+          "fontSize": 80,
+          "color": "#1f2937",
+          "opacity": 1,
+          "fontFamily": "sans"
+        }
+      ],
+      "name": "Compound-Complex"
+    },
+    {
+      "elements": [
+        {
+          "padding": 10,
+          "id": "el-1786509720322",
+          "fontFamily": "sans",
+          "x": 691,
+          "color": "#1f2937",
+          "fontSize": 80,
+          "y": 135,
+          "content": "Although it was completely unaware of its surroundings, the curious kitten played with a soft, colourful ball, and it seemed to enjoy the game immensely. ",
+          "lineHeight": 1.7,
+          "type": "text",
+          "height": 836,
+          "name": "Text",
+          "width": 1186,
+          "fontWeight": "700",
+          "align": "left",
+          "opacity": 1
+        },
+        {
+          "height": 836,
+          "fill": "#ededed",
+          "y": 128,
+          "radiusTR": 0,
+          "x": 82,
+          "id": "el-1786513935745",
+          "radiusTL": 0,
+          "width": 554,
+          "name": "Shape",
+          "radiusBL": 0,
+          "radiusBR": 0,
+          "opacity": 1,
+          "type": "rect"
+        },
+        {
+          "fill": "#d3bef8",
+          "opacity": 1,
+          "id": "el-1786513948016",
+          "radiusTR": 11,
+          "name": "Shape",
+          "radiusBR": 0,
+          "radiusBL": 0,
+          "y": 178,
+          "width": 442,
+          "height": 165,
+          "type": "rect",
+          "radiusTL": 11,
+          "x": 130
+        },
+        {
+          "x": 131,
+          "name": "Shape copy",
+          "radiusTR": 11,
+          "type": "rect",
+          "y": 369,
+          "fill": "#d3bef8",
+          "height": 165,
+          "radiusTL": 11,
+          "id": "rect-1786514004298-0-953",
+          "width": 442,
+          "radiusBL": 0,
+          "radiusBR": 0,
+          "opacity": 1
+        },
+        {
+          "name": "Shape copy copy",
+          "opacity": 1,
+          "height": 165,
+          "radiusTR": 11,
+          "type": "rect",
+          "id": "rect-1786514008040-0-299",
+          "radiusBR": 0,
+          "radiusBL": 0,
+          "width": 442,
+          "x": 127,
+          "fill": "#d3bef8",
+          "y": 557,
+          "radiusTL": 11
+        },
+        {
+          "type": "rect",
+          "radiusTR": 11,
+          "name": "Shape copy copy copy",
+          "opacity": 1,
+          "y": 755,
+          "radiusTL": 11,
+          "radiusBR": 0,
+          "id": "rect-1786514014058-0-532",
+          "x": 132,
+          "width": 275,
+          "radiusBL": 0,
+          "fill": "#f5f184",
+          "height": 164
+        },
+        {
+          "type": "rect",
+          "radiusTL": 0,
+          "radiusBR": 0,
+          "opacity": 1,
+          "radiusBL": 0,
+          "width": 444,
+          "name": "Shape copy copy copy",
+          "y": 695,
+          "id": "rect-1786514034163-0-370",
+          "radiusTR": 0,
+          "fill": "#8138ff",
+          "height": 27,
+          "x": 127
+        },
+        {
+          "x": 138,
+          "content": "New text",
+          "fontWeight": "700",
+          "id": "el-1786514126095",
+          "y": 216,
+          "padding": 10,
+          "color": "#1f2937",
+          "opacity": 1,
+          "name": "Text",
+          "fontSize": 52,
+          "lineHeight": 1.3,
+          "align": "left",
+          "width": 400,
+          "type": "text",
+          "height": 120,
+          "fontFamily": "sans"
+        }
+      ],
+      "id": "slide-1786513907115",
+      "name": "Slide 5"
+    }
+  ]
+}
