@@ -2,46 +2,54 @@
   "slides": [
     {
       "name": "Splice Comma",
+      "id": "slide-1786509665317",
       "elements": [
         {
-          "height": 120,
-          "opacity": 1,
-          "padding": 10,
-          "width": 746,
-          "x": 714,
-          "fontSize": 70,
           "y": 147,
-          "content": "Incorrect use!",
-          "fontWeight": "700",
-          "lineHeight": 1.3,
-          "name": "Text",
-          "align": "center",
-          "type": "text",
-          "id": "el-1786509667042",
+          "x": 714,
+          "width": 746,
           "fontFamily": "handwriting",
-          "color": "#ff4d67"
+          "content": "Incorrect use!",
+          "color": "#ff4d67",
+          "name": "Text",
+          "fontSize": 70,
+          "lineHeight": 1.3,
+          "padding": 10,
+          "height": 120,
+          "id": "el-1786509667042",
+          "opacity": 1,
+          "fontWeight": "700",
+          "align": "center",
+          "type": "text"
         },
         {
           "id": "el-1786509720322",
-          "fontSize": 80,
-          "width": 1436,
-          "fontFamily": "sans",
           "padding": 10,
-          "x": 243,
+          "width": 1436,
+          "fontWeight": "700",
+          "color": "#1f2937",
+          "lineHeight": 1.3,
           "opacity": 1,
           "name": "Text",
           "height": 124,
+          "x": 243,
+          "fontFamily": "sans",
           "y": 251,
-          "fontWeight": "700",
-          "lineHeight": 1.3,
-          "align": "center",
-          "content": "The dog barked, he ran away.",
           "type": "text",
-          "color": "#1f2937"
+          "fontSize": 80,
+          "align": "center",
+          "content": "The dog barked, he ran away."
         },
         {
+          "name": "Draw",
           "width": 77,
+          "x": 964,
+          "id": "el-1786509705030",
+          "strokeWidth": 10,
+          "y": 288,
+          "type": "draw",
           "opacity": 1,
+          "height": 76,
           "points": [
             {
               "x": 0.678339067312304,
@@ -52,24 +60,24 @@
               "x": 0.6015116590905737
             },
             {
-              "x": 0.4859724772051709,
-              "y": 0.08335199178164743
+              "y": 0.08335199178164743,
+              "x": 0.4859724772051709
             },
             {
-              "x": 0.3875251008941478,
-              "y": 0.14076658157797428
+              "y": 0.14076658157797428,
+              "x": 0.3875251008941478
             },
             {
-              "y": 0.24675998358056547,
-              "x": 0.2500255173092541
+              "x": 0.2500255173092541,
+              "y": 0.24675998358056547
             },
             {
               "x": 0.14199382443087274,
               "y": 0.3662657259107867
             },
             {
-              "y": 0.6287469942164978,
-              "x": 0.012308089679157294
+              "x": 0.012308089679157294,
+              "y": 0.6287469942164978
             },
             {
               "x": 0,
@@ -80,48 +88,48 @@
               "x": 0.018061995728912015
             },
             {
-              "y": 0.8836004267079188,
-              "x": 0.05149643997408567
+              "x": 0.05149643997408567,
+              "y": 0.8836004267079188
             },
             {
               "y": 0.9423955103764103,
               "x": 0.11199824641704273
             },
             {
-              "x": 0.21003704154978523,
-              "y": 0.9908536594768418
+              "y": 0.9908536594768418,
+              "x": 0.21003704154978523
             },
             {
-              "y": 1,
-              "x": 0.323805755701008
+              "x": 0.323805755701008,
+              "y": 1
             },
             {
-              "x": 0.4275986089986126,
-              "y": 0.9881787164776303
+              "y": 0.9881787164776303,
+              "x": 0.4275986089986126
             },
             {
-              "x": 0.6293111512999224,
-              "y": 0.9076568720607161
+              "y": 0.9076568720607161,
+              "x": 0.6293111512999224
             },
             {
-              "y": 0.8640136820396861,
-              "x": 0.693864695741644
+              "x": 0.693864695741644,
+              "y": 0.8640136820396861
             },
             {
               "x": 0.8603552891715796,
               "y": 0.70545495927678
             },
             {
-              "x": 0.9063019615699435,
-              "y": 0.6464355116223629
+              "y": 0.6464355116223629,
+              "x": 0.9063019615699435
             },
             {
               "y": 0.5366109596332952,
               "x": 0.9666335512078016
             },
             {
-              "y": 0.4142577993084963,
-              "x": 1
+              "x": 1,
+              "y": 0.4142577993084963
             },
             {
               "x": 1,
@@ -136,604 +144,160 @@
               "x": 0.921010275527615
             },
             {
-              "y": 0.13791916358339662,
-              "x": 0.8448127759653262
+              "x": 0.8448127759653262,
+              "y": 0.13791916358339662
             },
             {
               "y": 0.09565639033350512,
               "x": 0.743556442082401
             },
             {
-              "x": 0.5695072489693821,
-              "y": 0.06523201703377549
+              "y": 0.06523201703377549,
+              "x": 0.5695072489693821
             },
             {
-              "y": 0.06821752296608265,
-              "x": 0.41874642244281957
+              "x": 0.41874642244281957,
+              "y": 0.06821752296608265
             },
             {
-              "x": 0.3115828504819539,
-              "y": 0.08625122166575841
+              "y": 0.08625122166575841,
+              "x": 0.3115828504819539
             }
           ],
-          "y": 288,
-          "height": 76,
-          "type": "draw",
-          "strokeWidth": 10,
-          "x": 964,
-          "color": "#ff707e",
-          "id": "el-1786509705030",
-          "name": "Draw"
+          "color": "#ff707e"
         },
         {
-          "radiusTL": 30,
           "width": 1370,
+          "type": "rect",
+          "x": 272,
+          "radiusBL": 30,
+          "radiusTL": 30,
+          "height": 363,
+          "y": 420,
           "radiusBR": 30,
           "name": "Shape",
-          "height": 363,
-          "x": 272,
-          "radiusTR": 30,
-          "radiusBL": 30,
-          "id": "el-1786576467057",
-          "y": 420,
+          "fill": "#f2f2f2",
           "opacity": 1,
-          "type": "rect",
-          "fill": "#f2f2f2"
+          "id": "el-1786576467057",
+          "radiusTR": 30
         },
         {
-          "fontSize": 43,
-          "opacity": 1,
-          "y": 454,
-          "type": "text",
-          "padding": 10,
-          "lineHeight": 1.3,
-          "fontWeight": "500",
+          "fontFamily": "sans",
           "id": "el-1786576538424",
           "color": "#1f2937",
-          "x": 295,
-          "align": "center",
-          "name": "Text",
+          "y": 454,
           "content": "Compound sentences cannot be formed by joining two independent clauses with only a comma. In \"The dog barked, he ran away,\" both clauses are complete thoughts, making a lone comma structurally insufficient to connect them. To fix this, use one of three proper punctuation tools.",
+          "x": 295,
+          "fontSize": 43,
+          "type": "text",
           "width": 1322,
+          "fontWeight": "500",
+          "align": "center",
+          "opacity": 1,
+          "padding": 10,
           "height": 299.5,
-          "fontFamily": "sans"
-        },
-        {
-          "color": "#1f2937",
-          "points": [
-            {
-              "x": 0,
-              "y": 0
-            },
-            {
-              "y": 1,
-              "x": 0.2468651415624522
-            },
-            {
-              "x": 1,
-              "y": 1
-            }
-          ],
-          "height": 5.3955078125,
-          "x": 1306.23193359375,
-          "type": "draw",
-          "width": 275.3131103515625,
-          "opacity": 1,
-          "id": "el-1786579131723",
-          "name": "Draw",
-          "y": 678.823974609375,
-          "strokeWidth": 6
-        },
-        {
-          "strokeWidth": 6,
-          "y": 740.1715698242188,
-          "name": "Draw",
-          "color": "#1f2937",
-          "x": 590.3469848632812,
-          "width": 747.7373657226562,
-          "height": 4,
-          "id": "el-1786579134164",
-          "opacity": 1,
-          "type": "draw",
-          "points": [
-            {
-              "y": 0.6944732666015625,
-              "x": 0
-            },
-            {
-              "y": 0,
-              "x": 0.016664287255276723
-            },
-            {
-              "y": 0,
-              "x": 1
-            }
-          ]
-        },
-        {
-          "type": "arrow",
-          "width": 319.284505862043,
-          "y": 744,
-          "id": "el-1786579347647",
-          "opacity": 1,
-          "angle": 249,
-          "strokeWidth": 8,
-          "x": 1267,
-          "color": "#1f2937",
-          "height": 122.56183874449285,
-          "name": "Arrow",
-          "length": 342
-        },
-        {
-          "id": "arrow-1786579361782-0-558",
-          "x": 1272,
-          "name": "Arrow copy",
-          "color": "#1f2937",
-          "opacity": 1,
-          "length": 117,
-          "y": 743,
-          "angle": 179,
-          "height": 116.98218033329778,
-          "type": "arrow",
-          "strokeWidth": 8,
-          "width": 8
-        },
-        {
-          "name": "Arrow copy copy",
-          "length": 336,
-          "opacity": 1,
-          "color": "#1f2937",
-          "height": 120.4116310472209,
-          "x": 1271,
-          "angle": 111,
-          "id": "arrow-1786579364823-0-921",
-          "strokeWidth": 8,
-          "type": "arrow",
-          "y": 742,
-          "width": 313.68302330305977
+          "lineHeight": 1.3,
+          "name": "Text"
         }
-      ],
-      "id": "slide-1786509665317"
+      ]
     },
     {
       "name": "Coordinating Conjuction",
       "id": "slide-1786576879789",
       "elements": [
         {
-          "y": 254,
-          "width": 114,
-          "opacity": 1,
           "fill": "#fefc5a",
-          "radiusTR": 10,
-          "type": "rect",
-          "x": 955,
           "name": "Shape",
           "id": "el-1786576992002",
-          "radiusBL": 0,
+          "radiusTR": 10,
           "height": 96,
-          "radiusTL": 10,
-          "radiusBR": 0
-        },
-        {
-          "name": "Text",
-          "opacity": 1,
-          "height": 120,
-          "padding": 10,
-          "x": 565,
-          "fontFamily": "handwriting",
-          "type": "text",
-          "content": "Correct!",
-          "y": 152,
-          "width": 746,
-          "align": "center",
-          "color": "#24a71b",
-          "fontSize": 70,
-          "lineHeight": 1.3,
-          "fontWeight": "700",
-          "id": "el-1786509667042"
-        },
-        {
-          "id": "el-1786509720322",
-          "lineHeight": 1.3,
-          "fontWeight": "700",
-          "name": "Text",
-          "type": "text",
-          "width": 1436,
-          "align": "center",
-          "padding": 10,
-          "x": 243,
-          "fontSize": 80,
-          "fontFamily": "sans",
-          "color": "#1f2937",
-          "opacity": 1,
-          "y": 251,
-          "content": "The dog barked so he ran away.",
-          "height": 124
-        },
-        {
-          "opacity": 1,
-          "radiusBL": 30,
-          "y": 420,
-          "width": 1370,
-          "x": 272,
-          "radiusTR": 30,
-          "radiusBR": 30,
-          "height": 363,
-          "name": "Shape",
-          "fill": "#f2f2f2",
-          "id": "el-1786576467057",
+          "width": 114,
           "type": "rect",
-          "radiusTL": 30
+          "y": 254,
+          "x": 955,
+          "radiusBR": 0,
+          "opacity": 1,
+          "radiusBL": 0,
+          "radiusTL": 10
         },
         {
-          "width": 1322,
-          "fontFamily": "sans",
-          "padding": 10,
-          "id": "el-1786576538424",
-          "type": "text",
-          "opacity": 1,
-          "x": 295,
-          "fontSize": 43,
-          "color": "#1f2937",
-          "height": 243.6,
-          "content": "Compound sentences require a coordinating conjunction (for, and, nor, but, or, yet, so) to link two complete thoughts. \"So\" is a conjunction, and adding it after the comma provides the logical connection needed to join both clauses correctly.",
-          "fontWeight": "500",
-          "y": 474,
           "lineHeight": 1.3,
+          "opacity": 1,
+          "width": 746,
+          "x": 565,
+          "color": "#24a71b",
+          "padding": 10,
+          "fontWeight": "700",
+          "type": "text",
+          "y": 152,
+          "height": 120,
+          "id": "el-1786509667042",
+          "content": "Correct!",
           "name": "Text",
+          "fontFamily": "handwriting",
+          "fontSize": 70,
           "align": "center"
         },
         {
-          "points": [
-            {
-              "x": 0,
-              "y": 0.7050993458302428
-            },
-            {
-              "y": 0.7614175566282447,
-              "x": 0.0749933107052687
-            },
-            {
-              "x": 0.13545546484605553,
-              "y": 1
-            },
-            {
-              "x": 0.695491642106859,
-              "y": 0.23392395024705773
-            },
-            {
-              "y": 0,
-              "x": 1
-            }
-          ],
-          "strokeWidth": 6,
-          "width": 94.20843505859375,
-          "type": "draw",
-          "height": 80.27212524414062,
-          "x": 1037,
           "opacity": 1,
-          "name": "Draw",
-          "color": "#23a71a",
-          "id": "el-1786576981315",
-          "y": 183
-        },
-        {
-          "color": "#1f2937",
-          "opacity": 1,
-          "type": "draw",
-          "y": 525.1843872070312,
-          "points": [
-            {
-              "x": 0,
-              "y": 0
-            },
-            {
-              "x": 0.5256721142267332,
-              "y": 1
-            },
-            {
-              "y": 0.9083077266886418,
-              "x": 1
-            }
-          ],
-          "height": 5.46234130859375,
-          "strokeWidth": 6,
-          "x": 1443.6580810546875,
-          "name": "Draw",
-          "width": 177.398681640625,
-          "id": "el-1786579173355"
-        },
-        {
-          "strokeWidth": 6,
-          "height": 4,
-          "opacity": 1,
-          "points": [
-            {
-              "y": 0,
-              "x": 0
-            },
-            {
-              "x": 1,
-              "y": 0.4423980712890625
-            }
-          ],
-          "name": "Draw",
-          "id": "el-1786579176195",
-          "width": 363.6585388183594,
-          "y": 587.2398681640625,
-          "type": "draw",
-          "color": "#1f2937",
-          "x": 379.6201477050781
-        },
-        {
-          "height": 77.0401611328125,
-          "name": "Draw",
-          "color": "#1f2937",
-          "y": 417.5672607421875,
-          "points": [
-            {
-              "y": 1,
-              "x": 0
-            },
-            {
-              "x": 1,
-              "y": 0
-            }
-          ],
-          "opacity": 1,
-          "width": 154.7947998046875,
-          "x": 1611.3741455078125,
-          "id": "el-1786579182427",
-          "type": "draw",
-          "strokeWidth": 6
-        },
-        {
           "fontWeight": "700",
           "lineHeight": 1.3,
-          "fontSize": 34,
-          "color": "#1f2937",
-          "align": "center",
-          "width": 400,
-          "x": 1569,
           "padding": 10,
-          "fontFamily": "sans",
-          "opacity": 1,
-          "type": "text",
-          "id": "el-1786579184539",
-          "height": 120,
-          "content": "FANBOYS",
-          "y": 332,
-          "name": "Text"
-        },
-        {
-          "y": 412.24517822265625,
-          "height": 35.5718994140625,
-          "id": "el-1786579326655",
-          "color": "#1f2937",
-          "name": "Draw",
-          "points": [
-            {
-              "x": 0,
-              "y": 0.2813970247593555
-            },
-            {
-              "y": 0,
-              "x": 0.9427593269644633
-            },
-            {
-              "y": 1,
-              "x": 1
-            }
-          ],
-          "x": 1719.745849609375,
-          "strokeWidth": 6,
-          "opacity": 1,
-          "width": 49.347900390625,
-          "type": "draw"
-        }
-      ]
-    },
-    {
-      "id": "slide-1786578655244",
-      "name": "Full Stop",
-      "elements": [
-        {
-          "name": "Shape",
-          "radiusBR": 0,
-          "id": "el-1786576992002",
-          "width": 42,
-          "y": 254,
-          "radiusTL": 10,
-          "type": "rect",
-          "x": 986,
-          "opacity": 1,
-          "fill": "#fefc5a",
-          "radiusBL": 0,
-          "radiusTR": 10,
-          "height": 95
-        },
-        {
-          "height": 124,
+          "y": 251,
           "x": 243,
-          "lineHeight": 1.3,
-          "fontWeight": "700",
-          "color": "#1f2937",
           "fontSize": 80,
           "align": "center",
-          "y": 251,
-          "width": 1436,
-          "id": "el-1786509720322",
           "type": "text",
-          "content": "The dog barked. He ran away.",
-          "opacity": 1,
+          "height": 124,
           "fontFamily": "sans",
-          "padding": 10,
-          "name": "Text"
+          "content": "The dog barked so he ran away.",
+          "width": 1436,
+          "name": "Text",
+          "color": "#1f2937",
+          "id": "el-1786509720322"
         },
         {
+          "x": 272,
+          "type": "rect",
           "radiusTL": 30,
+          "radiusBL": 30,
+          "radiusBR": 30,
+          "opacity": 1,
           "y": 420,
           "id": "el-1786576467057",
-          "x": 272,
-          "radiusBR": 30,
-          "name": "Shape",
           "radiusTR": 30,
-          "height": 363,
-          "radiusBL": 30,
-          "type": "rect",
-          "opacity": 1,
           "fill": "#f2f2f2",
+          "name": "Shape",
+          "height": 363,
           "width": 1370
         },
         {
-          "color": "#1f2937",
-          "opacity": 1,
-          "type": "text",
-          "fontFamily": "sans",
           "align": "center",
-          "padding": 10,
-          "content": "Full stops separate independent clauses into distinct simple sentences rather than joining them into a compound sentence. A period ends the first thought completely, preventing the two independent clauses from running into each other.",
           "name": "Text",
-          "id": "el-1786576538424",
-          "x": 295,
+          "opacity": 1,
           "fontSize": 43,
-          "fontWeight": "500",
-          "lineHeight": 1.3,
-          "height": 243.6,
-          "width": 1322,
-          "y": 474
-        },
-        {
-          "lineHeight": 1.3,
-          "fontWeight": "700",
-          "color": "#24a71b",
-          "type": "text",
-          "x": 565,
-          "align": "center",
-          "name": "Text",
-          "id": "el-1786509667042",
-          "y": 152,
-          "height": 120,
-          "padding": 10,
-          "fontFamily": "handwriting",
-          "opacity": 1,
-          "content": "Correct!",
-          "width": 746,
-          "fontSize": 70
-        },
-        {
-          "name": "Draw",
-          "y": 190,
-          "color": "#23a71a",
-          "x": 1009,
-          "type": "draw",
-          "height": 80.27212524414062,
-          "id": "el-1786576981315",
-          "width": 94.20843505859375,
-          "points": [
-            {
-              "x": 0,
-              "y": 0.7050993458302428
-            },
-            {
-              "y": 0.7614175566282447,
-              "x": 0.0749933107052687
-            },
-            {
-              "y": 1,
-              "x": 0.13545546484605553
-            },
-            {
-              "x": 0.695491642106859,
-              "y": 0.23392395024705773
-            },
-            {
-              "y": 0,
-              "x": 1
-            }
-          ],
-          "strokeWidth": 6,
-          "opacity": 1
-        }
-      ]
-    },
-    {
-      "name": "Semicolon",
-      "elements": [
-        {
-          "y": 254,
-          "radiusTR": 10,
-          "name": "Shape",
-          "fill": "#fefc5a",
-          "x": 988,
-          "type": "rect",
-          "radiusBL": 0,
-          "width": 36,
-          "radiusTL": 10,
-          "opacity": 1,
-          "height": 99,
-          "radiusBR": 0,
-          "id": "el-1786576992002"
-        },
-        {
-          "width": 1436,
-          "content": "The dog barked; he ran away.",
-          "type": "text",
-          "id": "el-1786509720322",
-          "padding": 10,
-          "height": 124,
           "fontFamily": "sans",
-          "opacity": 1,
-          "name": "Text",
-          "y": 251,
-          "fontSize": 80,
-          "fontWeight": "700",
-          "lineHeight": 1.3,
-          "color": "#1f2937",
-          "align": "center",
-          "x": 243
-        },
-        {
-          "x": 272,
-          "radiusTR": 30,
-          "y": 420,
-          "height": 363,
-          "radiusBL": 30,
-          "name": "Shape",
-          "radiusTL": 30,
-          "opacity": 1,
-          "width": 1370,
-          "id": "el-1786576467057",
-          "radiusBR": 30,
-          "type": "rect",
-          "fill": "#f2f2f2"
-        },
-        {
+          "padding": 10,
+          "height": 243.6,
+          "x": 295,
           "y": 474,
           "id": "el-1786576538424",
-          "width": 1322,
-          "x": 295,
-          "fontSize": 43,
           "lineHeight": 1.3,
-          "fontWeight": "500",
+          "content": "Compound sentences require a coordinating conjunction (for, and, nor, but, or, yet, so) to link two complete thoughts. \"So\" is a conjunction, and adding it after the comma provides the logical connection needed to join both clauses correctly.",
           "color": "#1f2937",
-          "padding": 10,
           "type": "text",
-          "opacity": 1,
-          "align": "center",
-          "content": "Semicolons create a compound sentence by connecting two closely related clauses without needing a conjunction. The semicolon carries enough structural weight on its own to link both complete thoughts seamlessly.",
-          "fontFamily": "sans",
-          "height": 243.6,
-          "name": "Text"
+          "width": 1322,
+          "fontWeight": "500"
         },
         {
-          "id": "el-1786576981315",
-          "x": 1009,
-          "name": "Draw",
+          "x": 1037,
+          "strokeWidth": 6,
+          "color": "#23a71a",
           "opacity": 1,
-          "width": 94.20843505859375,
-          "type": "draw",
+          "y": 183,
+          "id": "el-1786576981315",
           "height": 80.27212524414062,
+          "name": "Draw",
           "points": [
             {
               "x": 0,
@@ -756,52 +320,394 @@
               "y": 0
             }
           ],
-          "y": 190,
-          "strokeWidth": 6,
-          "color": "#23a71a"
+          "type": "draw",
+          "width": 94.20843505859375
         },
         {
-          "fontSize": 70,
-          "fontFamily": "handwriting",
+          "y": 525.1843872070312,
           "opacity": 1,
-          "height": 120,
-          "padding": 10,
-          "width": 746,
-          "content": "Correct!",
-          "color": "#24a71b",
+          "width": 177.398681640625,
+          "points": [
+            {
+              "y": 0,
+              "x": 0
+            },
+            {
+              "y": 1,
+              "x": 0.5256721142267332
+            },
+            {
+              "x": 1,
+              "y": 0.9083077266886418
+            }
+          ],
+          "height": 5.46234130859375,
+          "x": 1443.6580810546875,
+          "id": "el-1786579173355",
+          "color": "#1f2937",
+          "type": "draw",
+          "strokeWidth": 6,
+          "name": "Draw"
+        },
+        {
+          "opacity": 1,
+          "points": [
+            {
+              "y": 0,
+              "x": 0
+            },
+            {
+              "y": 0.4423980712890625,
+              "x": 1
+            }
+          ],
+          "color": "#1f2937",
+          "height": 4,
+          "strokeWidth": 6,
+          "name": "Draw",
+          "x": 379.6201477050781,
+          "y": 587.2398681640625,
+          "width": 363.6585388183594,
+          "type": "draw",
+          "id": "el-1786579176195"
+        },
+        {
+          "color": "#1f2937",
+          "strokeWidth": 6,
+          "id": "el-1786579182427",
+          "opacity": 1,
+          "y": 417.5672607421875,
+          "type": "draw",
+          "points": [
+            {
+              "x": 0,
+              "y": 1
+            },
+            {
+              "x": 1,
+              "y": 0
+            }
+          ],
+          "height": 77.0401611328125,
+          "name": "Draw",
+          "width": 154.7947998046875,
+          "x": 1611.3741455078125
+        },
+        {
+          "align": "center",
+          "content": "FANBOYS",
+          "fontWeight": "700",
+          "name": "Text",
           "lineHeight": 1.3,
+          "fontSize": 34,
+          "height": 120,
+          "fontFamily": "sans",
+          "type": "text",
+          "opacity": 1,
+          "color": "#1f2937",
+          "id": "el-1786579184539",
+          "y": 332,
+          "width": 400,
+          "padding": 10,
+          "x": 1569
+        },
+        {
+          "strokeWidth": 6,
+          "name": "Draw",
+          "type": "draw",
+          "color": "#1f2937",
+          "points": [
+            {
+              "y": 0.2813970247593555,
+              "x": 0
+            },
+            {
+              "x": 0.9427593269644633,
+              "y": 0
+            },
+            {
+              "y": 1,
+              "x": 1
+            }
+          ],
+          "x": 1719.745849609375,
+          "height": 35.5718994140625,
+          "width": 49.347900390625,
+          "y": 412.24517822265625,
+          "id": "el-1786579326655",
+          "opacity": 1
+        }
+      ]
+    },
+    {
+      "elements": [
+        {
+          "radiusBL": 0,
+          "radiusTL": 10,
+          "id": "el-1786576992002",
+          "radiusBR": 0,
+          "height": 95,
+          "name": "Shape",
+          "fill": "#fefc5a",
+          "opacity": 1,
+          "radiusTR": 10,
+          "x": 986,
+          "y": 254,
+          "width": 42,
+          "type": "rect"
+        },
+        {
+          "content": "The dog barked. He ran away.",
+          "width": 1436,
+          "height": 124,
+          "fontFamily": "sans",
+          "id": "el-1786509720322",
+          "name": "Text",
+          "color": "#1f2937",
+          "opacity": 1,
+          "y": 251,
+          "fontSize": 80,
+          "lineHeight": 1.3,
+          "x": 243,
           "fontWeight": "700",
           "type": "text",
-          "align": "center",
-          "y": 152,
+          "padding": 10,
+          "align": "center"
+        },
+        {
+          "type": "rect",
+          "height": 363,
+          "radiusTR": 30,
+          "opacity": 1,
+          "x": 272,
+          "y": 420,
+          "radiusBR": 30,
+          "width": 1370,
+          "name": "Shape",
+          "radiusBL": 30,
+          "radiusTL": 30,
+          "fill": "#f2f2f2",
+          "id": "el-1786576467057"
+        },
+        {
+          "fontWeight": "500",
+          "opacity": 1,
+          "width": 1322,
+          "color": "#1f2937",
+          "type": "text",
+          "padding": 10,
+          "lineHeight": 1.3,
+          "fontFamily": "sans",
+          "id": "el-1786576538424",
+          "content": "Full stops separate independent clauses into distinct simple sentences rather than joining them into a compound sentence. A period ends the first thought completely, preventing the two independent clauses from running into each other.",
+          "y": 474,
           "name": "Text",
+          "align": "center",
+          "height": 243.6,
+          "fontSize": 43,
+          "x": 295
+        },
+        {
+          "content": "Correct!",
+          "width": 746,
+          "height": 120,
           "x": 565,
-          "id": "el-1786509667042"
+          "color": "#24a71b",
+          "y": 152,
+          "fontFamily": "handwriting",
+          "type": "text",
+          "id": "el-1786509667042",
+          "opacity": 1,
+          "lineHeight": 1.3,
+          "fontSize": 70,
+          "name": "Text",
+          "fontWeight": "700",
+          "padding": 10,
+          "align": "center"
+        },
+        {
+          "points": [
+            {
+              "y": 0.7050993458302428,
+              "x": 0
+            },
+            {
+              "x": 0.0749933107052687,
+              "y": 0.7614175566282447
+            },
+            {
+              "x": 0.13545546484605553,
+              "y": 1
+            },
+            {
+              "y": 0.23392395024705773,
+              "x": 0.695491642106859
+            },
+            {
+              "x": 1,
+              "y": 0
+            }
+          ],
+          "type": "draw",
+          "height": 80.27212524414062,
+          "id": "el-1786576981315",
+          "y": 190,
+          "color": "#23a71a",
+          "name": "Draw",
+          "x": 1009,
+          "strokeWidth": 6,
+          "width": 94.20843505859375,
+          "opacity": 1
         }
       ],
-      "id": "slide-1786578692729"
+      "id": "slide-1786578655244",
+      "name": "Full Stop"
+    },
+    {
+      "id": "slide-1786578692729",
+      "name": "Semicolon",
+      "elements": [
+        {
+          "y": 254,
+          "id": "el-1786576992002",
+          "name": "Shape",
+          "width": 36,
+          "fill": "#fefc5a",
+          "x": 988,
+          "radiusBR": 0,
+          "radiusBL": 0,
+          "radiusTL": 10,
+          "type": "rect",
+          "radiusTR": 10,
+          "height": 99,
+          "opacity": 1
+        },
+        {
+          "width": 1436,
+          "fontSize": 80,
+          "lineHeight": 1.3,
+          "height": 124,
+          "padding": 10,
+          "name": "Text",
+          "opacity": 1,
+          "fontWeight": "700",
+          "color": "#1f2937",
+          "type": "text",
+          "x": 243,
+          "y": 251,
+          "align": "center",
+          "content": "The dog barked; he ran away.",
+          "id": "el-1786509720322",
+          "fontFamily": "sans"
+        },
+        {
+          "fill": "#f2f2f2",
+          "radiusBR": 30,
+          "opacity": 1,
+          "name": "Shape",
+          "radiusTL": 30,
+          "id": "el-1786576467057",
+          "radiusBL": 30,
+          "width": 1370,
+          "height": 363,
+          "y": 420,
+          "type": "rect",
+          "x": 272,
+          "radiusTR": 30
+        },
+        {
+          "color": "#1f2937",
+          "height": 243.6,
+          "fontFamily": "sans",
+          "padding": 10,
+          "id": "el-1786576538424",
+          "fontSize": 43,
+          "opacity": 1,
+          "type": "text",
+          "width": 1322,
+          "fontWeight": "500",
+          "y": 474,
+          "align": "center",
+          "x": 295,
+          "content": "Semicolons create a compound sentence by connecting two closely related clauses without needing a conjunction. The semicolon carries enough structural weight on its own to link both complete thoughts seamlessly.",
+          "lineHeight": 1.3,
+          "name": "Text"
+        },
+        {
+          "width": 94.20843505859375,
+          "type": "draw",
+          "opacity": 1,
+          "strokeWidth": 6,
+          "height": 80.27212524414062,
+          "name": "Draw",
+          "points": [
+            {
+              "x": 0,
+              "y": 0.7050993458302428
+            },
+            {
+              "y": 0.7614175566282447,
+              "x": 0.0749933107052687
+            },
+            {
+              "x": 0.13545546484605553,
+              "y": 1
+            },
+            {
+              "y": 0.23392395024705773,
+              "x": 0.695491642106859
+            },
+            {
+              "y": 0,
+              "x": 1
+            }
+          ],
+          "id": "el-1786576981315",
+          "x": 1009,
+          "color": "#23a71a",
+          "y": 190
+        },
+        {
+          "height": 120,
+          "id": "el-1786509667042",
+          "padding": 10,
+          "align": "center",
+          "fontWeight": "700",
+          "type": "text",
+          "lineHeight": 1.3,
+          "opacity": 1,
+          "color": "#24a71b",
+          "x": 565,
+          "fontFamily": "handwriting",
+          "y": 152,
+          "content": "Correct!",
+          "fontSize": 70,
+          "width": 746,
+          "name": "Text"
+        }
+      ]
     }
   ],
   "canvasSettings": {
-    "width": 1877,
     "height": 883,
+    "width": 1877,
+    "snapToGrid": false,
     "backgroundColor": "#ffffff",
     "nav": {
-      "buttonBottomColor": "#b31424",
+      "buttonFontWeight": "700",
       "buttonPaddingX": 23,
       "buttonFontSize": 27,
-      "navPosition": "bottom",
-      "buttonColor": "#ffa8b1",
-      "buttonInactiveBottomColor": "#B8D4DF",
-      "buttonPaddingY": 8,
-      "buttonFontWeight": "700",
-      "buttonInactiveTextColor": "#073048",
       "navGap": 12,
-      "buttonInactiveColor": "#DCEBF2",
+      "buttonPaddingY": 8,
+      "buttonBottomColor": "#b31424",
+      "buttonInactiveTextColor": "#073048",
+      "buttonTextColor": "#000000",
+      "buttonColor": "#ffa8b1",
       "buttonRadius": 8,
-      "buttonTextColor": "#000000"
+      "navPosition": "bottom",
+      "buttonInactiveColor": "#DCEBF2",
+      "buttonInactiveBottomColor": "#B8D4DF"
     },
-    "snapToGrid": false,
     "gridSize": 25
   },
   "activeIndex": 0
