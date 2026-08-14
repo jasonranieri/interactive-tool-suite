@@ -1,0 +1,79 @@
+{
+  "tabs": [
+    {
+      "blocks": [],
+      "title": "Tab 1",
+      "id": "tab-1786700334557-145pv"
+    }
+  ],
+  "styles": {
+    "blockSpacing": 12,
+    "table": {
+      "plain": {
+        "text": "#111827",
+        "border": "#ffffff",
+        "bg": "#ffffff"
+      },
+      "headerFontSize": 14,
+      "cellPadding": 10,
+      "bordered": {
+        "border": "#cbc8be",
+        "text": "#111827",
+        "bg": "#fafaf8"
+      },
+      "radius": 8,
+      "bodyFontSize": 14
+    },
+    "tabLabel": {
+      "fontSize": 15,
+      "activeColor": "#0C5E82",
+      "paddingX": 24,
+      "paddingY": 16
+    },
+    "subtitle": {
+      "color": "#6b7280",
+      "size": 16
+    },
+    "pageBackground": {
+      "color": "#F1F0EB",
+      "transparent": false
+    },
+    "h2": {
+      "color": "#111827",
+      "size": 28
+    },
+    "h4": {
+      "size": 18,
+      "color": "#111827"
+    },
+    "h3": {
+      "size": 22,
+      "color": "#111827"
+    },
+    "button": {
+      "primary": {
+        "border": "#2563eb",
+        "bg": "#2563eb",
+        "text": "#ffffff"
+      },
+      "secondary": {
+        "border": "#d1d5db",
+        "bg": "#ffffff",
+        "text": "#111827"
+      }
+    },
+    "badge": {
+      "primary": {
+        "bg": "#2563eb",
+        "border": "#2563eb",
+        "text": "#ffffff"
+      },
+      "secondary": {
+        "text": "#374151",
+        "border": "#d1d5db",
+        "bg": "#f3f4f6"
+      }
+    }
+  },
+  "activeTabId": "tab-1786700334557-145pv"
+}
