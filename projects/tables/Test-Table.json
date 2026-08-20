@@ -1,0 +1,70 @@
+{
+  "activeTableId": "table-1787208041377",
+  "layout": {
+    "mode": "side-by-side",
+    "perRow": 2
+  },
+  "tables": [
+    {
+      "rowSeparatorsOnly": false,
+      "headerText": null,
+      "headerTextSize": 13,
+      "headerBg": null,
+      "bodyAlign": "left",
+      "headerPadding": 9,
+      "headerBold": true,
+      "themePreset": "bordered",
+      "freezeHeader": false,
+      "bodyBold": false,
+      "headerAlign": "left",
+      "borderColor": null,
+      "name": "Table 1",
+      "id": "table-1787208041377",
+      "rows": [
+        [
+          {
+            "tooltip": "",
+            "cellBg": null,
+            "text": "Header 1",
+            "cellBold": null,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          {
+            "text": "Header 2",
+            "tooltip": "",
+            "cellBg": null,
+            "colSpan": 1,
+            "cellBold": null,
+            "rowSpan": 1
+          }
+        ],
+        [
+          {
+            "cellBold": null,
+            "tooltip": "",
+            "colSpan": 1,
+            "rowSpan": 1,
+            "text": "Cell 1",
+            "cellBg": null
+          },
+          {
+            "cellBg": null,
+            "rowSpan": 1,
+            "colSpan": 1,
+            "cellBold": null,
+            "text": "Cell 2",
+            "tooltip": ""
+          }
+        ]
+      ],
+      "freezeFirstCol": false,
+      "accentColor": null,
+      "cellPadding": 9,
+      "cornerRadius": 8,
+      "bodyTextSize": 13,
+      "hasHeaderRow": true,
+      "showTitleInExport": true
+    }
+  ]
+}
